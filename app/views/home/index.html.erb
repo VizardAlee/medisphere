@@ -1,0 +1,77 @@
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="text-center mb-4" >Welcome to MediSphere</h1>
+      <p class="text-center">Your one-stop platform for efficient health record management.</p>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <% if current_user&.admin? %>
+      <!-- Admin Section -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Manage Hospitals & Pharmacies</h5>
+            <p class="card-text">Add or edit hospitals and pharmacies.</p>
+            <a href="<%= hospitals_path %>" class="btn btn-primary">Manage Hospitals</a>
+            <a href="<%= pharmacies_path %>" class="btn btn-secondary">Manage Pharmacies</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if current_user&.staff? %>
+      <!-- Staff Section -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Update Health Records</h5>
+            <p class="card-text">Add or update patient diagnosis and prescription records.</p>
+            <a href="<%= health_records_path %>" class="btn btn-primary">View Health Records</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if current_user&.patient? %>
+      <!-- Patient Section -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">View Your Health Records</h5>
+            <p class="card-text">Access and print your health records when needed.</p>
+            <a href="<%= health_records_path(patient_id: current_user.id) %>" class="btn btn-primary">View My Records</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if current_user&.emergency_respondent? %>
+      <!-- Emergency Respondent Section -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Emergency Patient Records</h5>
+            <p class="card-text">Access emergency details of patients for urgent treatment.</p>
+            <a href="<%= emergency_records_path %>" class="btn btn-danger">Access Emergency Records</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if current_user.nil? %>
+      <!-- Visitor Section -->
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Welcome, Visitor!</h5>
+            <p class="card-text">Sign up or log in to access more features.</p>
+            <a href="<%= new_user_registration_path %>" class="btn btn-primary">Sign Up</a>
+            <a href="<%= new_user_session_path %>" class="btn btn-secondary">Log In</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>

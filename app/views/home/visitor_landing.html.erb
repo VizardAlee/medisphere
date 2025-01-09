@@ -1,0 +1,12 @@
+<div class="container py-5 text-center">
+  <h1>Welcome to MediSphere</h1>
+  <p class="lead">Track and manage your health records with ease.</p>
+  
+  <% if user_role == "visitor" %>
+    <p>To access your personalized health dashboard, please sign up or log in:</p>
+    <a href="<%= new_user_registration_path %>" class="btn btn-primary btn-lg mx-2">Sign Up Now</a>
+    <a href="<%= new_user_session_path %>" class="btn btn-secondary btn-lg mx-2">Log In</a>
+  <% else %>
+    <p class="text-success">You are already logged in. <a href="<%= root_path %>">Go to your dashboard</a>.</p>
+  <% end %>
+</div>
