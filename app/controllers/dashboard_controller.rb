@@ -1,14 +1,12 @@
 class DashboardController < ApplicationController
   before_action :authenticate_user!
-  
+  before_action :check_admin_profile, if: -> { current_user&.admin? } 
+
   def index
     @user = current_user
-    if current_user.patient?
-      @records = HealthRecord.where(patient_id: current_user.id)
-    elsif current_user.admin? || current_user.staff?
-      @records = HealthRecord.all
-    else
-      @records = []
-    end
+    @organization = @user.organization
+    @staff_members = @organization.users.where.not(id: @user.id)
+    @records = @user.health_records || []
   end
 end
+# Compare this snippet from app/controllers/application_controller.rb:

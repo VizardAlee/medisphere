@@ -8,11 +8,12 @@ class User < ApplicationRecord
   enum :role, %i[admin staff patient emergency_respondent]
   validates :role, presence: true
 
+  belongs_to :organization, optional: true
   has_many :health_records, dependent: :destroy
 
   private
 
   def set_default_role
-    self.role ||= "patient"
+    self.role ||= "admin"
   end
 end

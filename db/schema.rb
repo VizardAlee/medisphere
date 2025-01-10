@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_08_164945) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_10_135447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,12 +21,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_08_164945) do
     t.bigint "updated_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["patient_id"], name: "index_health_records_on_patient_id"
+    t.index ["user_id"], name: "index_health_records_on_user_id"
   end
 
   create_table "hospitals", force: :cascade do |t|
     t.string "name"
     t.string "location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -50,10 +60,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_08_164945) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "role", default: "visitor"
+    t.bigint "organization_id", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "health_records", "patients"
+  add_foreign_key "health_records", "users"
   add_foreign_key "patients", "hospitals"
+  add_foreign_key "users", "organizations"
 end

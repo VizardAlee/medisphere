@@ -1,5 +1,5 @@
 class HealthRecord < ApplicationRecord
-  belongs_to :patient
+  belongs_to :user
 
   def create?
     user.admin? || user.staff?

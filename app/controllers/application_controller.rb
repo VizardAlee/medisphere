@@ -6,23 +6,9 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :check_admin_profile, if: -> { current_user&.admin? && current_user.organization.nil? }
   # before_action :authenticate_user, unless: :devise_controller?
   # helper_method :current_user, :user_role
-
-  # Handle unauthorized access
-  # rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
-  # def authenticate_user
-  #   unless current_user
-  #     flash[:alert] = "You need to log in to access this page."
-  #     redirect_to new_user_session_path
-  #   end
-  # end
-
-  # def current_user
-  #   # Define how to fetch the current user (e.g., using session)
-  #   @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
-  # end
 
   def user_role
     current_user&.role || "visitor"
@@ -33,15 +19,26 @@ class ApplicationController < ActionController::Base
     redirect_to(request.referrer || root_path)
   end
 
+  def after_sign_in_path_for(resource)
+    if resource.admin? && resource.organization.nil?
+      new_organization_path
+    else
+      root_path
+    end
+  end
+
   private
 
-  # def public_page?
-  #   request.path == new_user_session_path || request.path == new_user_registration_path || controller_name == "home"
-  # end
+  def check_admin_profile
+    if controller_name != "organizations" && action_name != "new"
+      flash[:alert] = "Please complete your organization profile to continue."
+      redirect_to new_organization_path
+    end
+  end
 
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[role])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[role organization_id])
   end
 end

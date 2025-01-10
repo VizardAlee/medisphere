@@ -1,0 +1,22 @@
+<div class="container py-5">
+  <h1 class="mb-4">Create Your Organization</h1>
+
+  <%= form_with model: @organization, local: true do |f| %>
+    <div class="mb-3">
+      <%= f.label :name, "Organization Name" %>
+      <%= f.text_field :name, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :address, "Address" %>
+      <%= f.text_field :address, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :phone, "Phone Number" %>
+      <%= f.telephone_field :phone, class: "form-control", required: true %>
+    </div>
+
+    <%= f.submit "Create Organization", class: "btn btn-primary" %>
+  <% end %>
+</div>
