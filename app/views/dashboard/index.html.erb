@@ -1,34 +1,125 @@
 <div class="container py-5">
-  <!-- Welcome Section -->
-  <div class="text-center mb-5">
-    <h1 class="display-4">Welcome, <%= @user.email %>!</h1>
-    <p class="lead">Your dashboard gives you access to all your health records and tools.</p>
-    <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-danger mt-3' %>
-  </div>
+  <% if current_user.role == 'admin' %>
+    <!-- Admin Dashboard -->
+    <div class="text-center mb-5">
+      <h1 class="display-4">Welcome, Admin <%= current_user.email %>!</h1>
+      <p class="lead">Manage staff, patients, and health records from here.</p>
+    </div>
 
-  <!-- Health Records Section -->
-  <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-      <h2 class="mb-0">Your Health Records</h2>
+    <!-- Manage Staff Section -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Staff Management</h2>
+      </div>
+      <div class="card-body">
+        <%= link_to "Create Staff", new_staff_path, class: "btn btn-primary mb-3" %>
+        <% if @staff.any? %>
+          <ul class="list-group">
+            <% @staff.each do |staff| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= staff.name %> (<%= staff.role %>)</span>
+                <%= link_to "Edit", edit_staff_path(staff), class: "btn btn-sm btn-secondary" %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info">No staff found. Add new staff members above.</div>
+        <% end %>
+      </div>
     </div>
-    <div class="card-body">
-      <% if @records.any? %>
-        <ul class="list-group">
-          <% @records.each do |record| %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><%= record.title %></span>
-              <span class="badge bg-secondary"><%= record.created_at.to_formatted_s(:short) %></span>
-            </li>
-          <% end %>
-        </ul>
-      <% else %>
-        <div class="alert alert-info text-center" role="alert">
-          No health records found. <a href="#" class="alert-link">Add a record</a>.
-        </div>
-      <% end %>
+
+    <!-- Manage Patients Section -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Patient Management</h2>
+      </div>
+      <div class="card-body">
+        <%= link_to "Add Patient Record", new_patient_path, class: "btn btn-success mb-3" %>
+        <% if @patients.any? %>
+          <ul class="list-group">
+            <% @patients.each do |patient| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= patient.name %> (Age: <%= patient.age %>, Gender: <%= patient.gender %>)</span>
+                <%= link_to "View Records", patient_health_records_path(patient), class: "btn btn-sm btn-secondary" %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info">No patients found. Add new records above.</div>
+        <% end %>
+      </div>
     </div>
-  </div>
+
+  <% elsif current_user.role == 'staff' %>
+    <!-- Staff Dashboard -->
+    <div class="text-center mb-5">
+      <h1 class="display-4">Welcome, <%= current_user.email %>!</h1>
+      <p class="lead">You can manage health records for patients here.</p>
+    </div>
+
+    <!-- Health Records Section -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Patient Health Records</h2>
+      </div>
+      <div class="card-body">
+        <% if @records.any? %>
+          <ul class="list-group">
+            <% @records.each do |record| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= record.patient.name %>: <%= record.diagnosis %></span>
+                <%= link_to "Edit", edit_health_record_path(record), class: "btn btn-sm btn-secondary" %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info text-center" role="alert">
+            No health records found. <%= link_to "Add a record", new_health_record_path, class: "alert-link" %>.
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+  <% elsif current_user.role == 'patient' %>
+    <!-- Patient Dashboard -->
+    <div class="text-center mb-5">
+      <h1 class="display-4">Welcome, <%= current_user.name || current_user.email %>!</h1>
+      <p class="lead">Here are your health records.</p>
+    </div>
+
+    <!-- Health Records Section -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Your Health Records</h2>
+      </div>
+      <div class="card-body">
+        <% if @records.any? %>
+          <ul class="list-group">
+            <% @records.each do |record| %>
+              <li class="list-group-item">
+                <span>Your Doctor's Notes: <%= record.diagnosis %></span><br>
+                <span>Your Medication: <%= record.prescription %></span>
+                <span class="badge bg-secondary float-end"><%= record.created_at.to_formatted_s(:short) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info text-center" role="alert">
+            No health records found.
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+  <% else %>
+    <!-- Visitor or Unknown Role -->
+    <div class="alert alert-warning text-center" role="alert">
+      Please <%= link_to "sign in", new_user_session_path %> to access the dashboard.
+    </div>
+    <% unless current_user.role == 'visitor' %>
+      <div class="text-center mb-4">
+        <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-danger" %>
+      </div>
+    <% end %>
+  <% end %>
 </div>
-
-<%= link_to "Create Staff", new_staff_path, class: "btn btn-primary" %>
-<%= link_to "Create Organization", new_organization_path, class: "btn btn-primary" %>

@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations" }
-  resources :staffs, only: %i[new create]
+  resources :staffs, only: %i[new create edit upadte delete]
   resources :organizations
+  resources :patients, only: [:new, :create]
 
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root
+    get "dashboard", to: "dashboard#index", as: :dashboard
   end
 
   unauthenticated do

@@ -30,9 +30,21 @@ class ApplicationController < ActionController::Base
   private
 
   def check_admin_profile
-    if controller_name != "organizations" && action_name != "new"
-      flash[:alert] = "Please complete your organization profile to continue."
+    return unless current_user.admin?
+
+    if current_user.organization.blank? || !organization_profile_complete?(current_user.organization)
       redirect_to new_organization_path
+    end
+  end
+
+  def organization_profile_complete?(organization)
+    organization.name.present? && organization.address.present? && organization.phone.present?
+  end
+
+  def authorize_admin!
+    unless current_user&.admin?
+      flash[:alert] = "You are not authorized to perform this action."
+      redirect_to root_path
     end
   end
 
