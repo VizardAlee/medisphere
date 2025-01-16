@@ -20,12 +20,22 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    if resource.admin? && resource.organization.nil?
-      new_organization_path
+    case resource.role
+    when 'admin'
+      resource.organization.nil? ? new_organization_path : root_path
+    when 'staff'
+      staff_dashboard_path # Ensure this route exists
     else
       root_path
     end
   end
+  
+
+  def current_organization
+    @current_organization ||= current_user.organization
+  end
+
+  helper_method :current_organization
 
   private
 

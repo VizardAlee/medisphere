@@ -27,6 +27,12 @@
               <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirm Password", required: true %>
             </div>
 
+            <!-- Staff Role Field -->
+            <div class="mb-3">
+              <%= f.label :staff_role, class: "form-label" %>
+              <%= f.select :staff_role, User::ROLES.map { |role| [role.humanize, role] }, promt: "Select a role", class: "form-control", required: true %>
+            </div>
+
             <%= f.submit "Create Staff", class: "btn btn-primary" %>
           <% end %>
         </div>

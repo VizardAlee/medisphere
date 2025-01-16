@@ -1,0 +1,29 @@
+<div class="container py-5">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h3>Welcome to MediSphere</h3>
+      </div>
+      <div class="card-body">
+        <p>Dear <strong><%= @staff.name || @staff.email %></strong>,</p>
+        <p>We're excited to welcome you to <strong>MediSphere</strong>. You have been registered as a staff member at <strong><%= @organization.name %></strong>.</p>
+        <p>Your login details are as follows:</p>
+        <table class="table table-bordered">
+          <tr>
+            <th>Email</th>
+            <td><%= @staff.email %></td>
+          </tr>
+          <tr>
+            <th>Password</th>
+            <td><%= @password %></td>
+          </tr>
+        </table>
+        <p>
+          Please log in using the details above. For security, we recommend updating your password immediately after logging in.
+        </p>
+        <a href="<%= new_user_session_url %>" class="btn btn-primary">Log In</a>
+      </div>
+      <div class="card-footer text-center text-muted">
+        <small>Need assistance? Contact us at support@medisphere.com</small>
+      </div>
+    </div>
+  </div>

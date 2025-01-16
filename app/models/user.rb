@@ -8,10 +8,14 @@ class User < ApplicationRecord
   enum role: { admin: 0, staff: 1, patient: 2, visitor: 3 }
   validates :role, presence: true
 
+  # enum for staff roles
+
+  ROLES = %w[doctor pharmacist nurse clerk]
+  validates :name, presence: true
+  validates :staff_role, inclusion: { in: ROLES }, allow_nil: true
+
   belongs_to :organization, optional: true
   has_many :health_records, dependent: :destroy
-
-  validates :name, presence: true
 
   private
 

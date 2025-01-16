@@ -1,0 +1,7 @@
+<%= turbo_stream.remove "staff_#{@staff.id}" %>
+
+<% if @staffs.empty? %>
+  <%= turbo_stream.update "staff_list" do %>
+    <div class="alert alert-info">No staff found for the selected role.</div>
+  <% end %>
+<% end %>

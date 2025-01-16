@@ -1,0 +1,15 @@
+<% if staff.any? %>
+  <ul id="staff-list" class="list-group">
+    <% staff.each do |member| %>
+      <li id="<%= dom_id(member) %>" class="list-group-item d-flex justify-content-between align-items-center">
+        <span><%= link_to member.name, staff_path(member), data: { turbo: false } %> (<%= member.staff_role.humanize %>)</span>
+        <div>
+          <%= link_to "Edit", edit_staff_path(member), class: "btn btn-sm btn-secondary" %>
+          <%= button_to "Delete", staff_path(member), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-sm btn-danger" %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <div id="no-staff-alert" class="alert alert-info">No staff found for the selected role.</div>
+<% end %>
