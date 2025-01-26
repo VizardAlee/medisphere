@@ -22,13 +22,21 @@ class HealthRecordPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.admin? || user.staff?
+    user.admin?
   end
 
   class Scope < ApplicationPolicy::Scope
     # NOTE: Be explicit about which records you allow access to!
-    # def resolve
-    #   scope.all
-    # end
+    def resolve
+      if user.admin? || user.staff?
+        scope.all
+      elsif user.patient?
+        scope.where(patient_id: user.id)
+      elsif user.emergency_respondent?
+        scope.all
+      else
+        scope.none
+      end
+    end
   end
 end

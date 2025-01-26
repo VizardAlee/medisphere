@@ -1,0 +1,27 @@
+<div class="text-center mb-5">
+      <h1 class="display-4">Welcome, <%= current_user.email %>!</h1>
+      <p class="lead">You can manage health records for patients here.</p>
+    </div>
+
+    <!-- Health Records Section -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Patient Health Records</h2>
+      </div>
+      <div class="card-body">
+        <% if @records.any? %>
+          <ul class="list-group">
+            <% @records.each do |record| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= record.patient.name %>: <%= record.diagnosis %></span>
+                <%= link_to "Edit", edit_health_record_path(record), class: "btn btn-sm btn-secondary" %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info text-center" role="alert">
+            No health records found. <%= link_to "Add a record", new_health_record_path, class: "alert-link" %>.
+          </div>
+        <% end %>
+      </div>
+    </div>

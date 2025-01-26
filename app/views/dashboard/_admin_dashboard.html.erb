@@ -1,0 +1,65 @@
+<div class="text-center mb-5">
+  <h1 class="display-4">Welcome, Admin <%= current_user.email %>!</h1>
+  <p class="lead">Manage staff, patients, and health records from here.</p>
+</div>
+
+<!-- Manage Staff Section -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <h2 class="mb-0">Staff Management</h2>
+  </div>
+  <div class="card-body">
+    <%= link_to "Create Staff", new_staff_path, class: "btn btn-primary mb-3" %>
+    <% if @staffs.any? %>
+      <div class="mb-4">
+
+        <!-- Filter Form in Separate Turbo Frame -->
+        <%= turbo_frame_tag "staff_list" do %>
+          <%= form_with url: staffs_path, method: :get, local: false do |form| %>
+            <div class="form-group">
+              <%= form.label :staff_role, "Filter by Role" %>
+              <%= form.select :staff_role, options_for_select(['doctor', 'nurse', 'pharmacist', 'clerk'], params[:staff_role]), prompt: "Select Role", class: "form-control" %>
+            </div>
+            <%= form.submit "Filter", class: "btn btn-primary" %>
+          <% end %>
+        <% end %>
+        <%= turbo_frame_tag "staff_list" do %>
+          <%= render 'staffs/staff_list', staff: @staffs %>
+        <% end %>
+
+        <!-- Staff List in Separate Turbo Frame -->
+        <%= turbo_frame_tag "staff_list" do %>
+          <%= render 'staffs/staff_list', staff: @staffs %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        <%= no_records_message("staff", "Add new staff members") %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Manage Patients Section -->
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <h2 class="mb-0">Patient Management</h2>
+  </div>
+  <div class="card-body">
+    <%= link_to "Add Patient Record", new_patient_path, class: "btn btn-success mb-3" %>
+    <% if @patients.any? %>
+      <ul class="list-group">
+        <% @patients.each do |patient| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= patient.name %> (Age: <%= patient.age %>, Gender: <%= patient.gender %>)</span>
+            <%= link_to "View Records", patient_health_records_path(patient), class: "btn btn-sm btn-secondary" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="alert alert-info">
+        <%= no_records_message("patient", "Add new patients") %>
+      </div>
+    <% end %>
+  </div>
+</div>

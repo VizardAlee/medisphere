@@ -25,29 +25,24 @@ class StaffsController < ApplicationController
   
 
   def create
-    Rails.logger.info("Staff params: #{staff_params.inspect}")
-
-    # Include the staff_role in the user creation process and ensure role is set to 'staff'
-    generated_password = SecureRandom.hex(8)
-    @staff = User.new(
-      staff_params.merge(
-        role: :staff,
-        organization_id: current_user.organization_id,
-        password: generated_password,
-        password_confirmation: generated_password
-      )
-    )
-
+    staff_email = staff_params[:email]
+    temp_password = staff_params[:password]
+  
+    @staff = User.new(staff_params.merge(role: 'staff', organization_id: current_user.organization_id))
+    @staff.password = temp_password
+    @staff.password_confirmation = staff_params[:password_confirmation]
+  
     if @staff.save
-      StaffMailer.welcome_email(@staff, generated_password).deliver_later
-
-      flash[:notice] = "Staff created successfully."
-      redirect_to authenticated_root_path # Updated to match your route
+      StaffMailer.welcome_email(@staff, temp_password).deliver_later
+      flash[:notice] = "Staff created successfully, and a welcome email has been sent."
+      redirect_to authenticated_root_path
     else
       flash[:alert] = "Failed to create staff."
       render :new, status: :unprocessable_entity
     end
   end
+      
+  
 
   def edit
     @staff = User.find(params[:id])

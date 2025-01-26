@@ -18,6 +18,10 @@ class HealthRecordsController < ApplicationController
     authorize @record
   end
 
+  def new
+    @record = HealthRecord.new
+  end
+
   def create
     @record = HealthRecord.new(health_record_params)
     authorize @record

@@ -5,10 +5,14 @@ Rails.application.routes.draw do
   resources :organizations
   resources :patients, only: [:new, :create]
 
+  resources :health_records, only: [:new, :create, :index, :show, :edit, :update, :destroy]
+
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root
     get "dashboard", to: "dashboard#index", as: :dashboard
   end
+
+  # get 'staff/dashboard', to: 'staffs#dashboard', as: :staff_dashboard
 
   unauthenticated do
     root to: "home#index"

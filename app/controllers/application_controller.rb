@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
     when 'admin'
       resource.organization.nil? ? new_organization_path : root_path
     when 'staff'
-      staff_dashboard_path # Ensure this route exists
+      dashboard_path # Ensure this route exists
     else
       root_path
     end

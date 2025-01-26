@@ -1,19 +1,6 @@
 class HealthRecord < ApplicationRecord
-  belongs_to :user
+  belongs_to :staff, class_name: "User", foreign_key: "staff_id", optional: true
+  belongs_to :patient, class_name: "User", foreign_key: "patient_id"
 
-  def create?
-    user.admin? || user.staff?
-  end
-
-  def update?
-    user.admin? || user.staff?
-  end
-
-  def show?
-    user.admin? || user.staff? || (user.patient? && record.patient_id == user.id) || user.emergency_respondent?
-  end
-
-  def destroy?
-    user.admin?
-  end
+  validates :description, :diagnosis, :treatment_plan, presence: true
 end

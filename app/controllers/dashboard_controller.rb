@@ -9,7 +9,7 @@ class DashboardController < ApplicationController
       @patients = current_user.organization&.patients || []
     elsif current_user.staff?
       # Fetch health records assigned to the current staff
-      @records = HealthRecord.where(staff_id: current_user.id)
+      @records = HealthRecord.where(user_id: current_user.id) # Corrected from staff_id to user_id
     elsif current_user.patient?
       # Fetch health records belonging to the patient
       @records = HealthRecord.where(patient_id: current_user.id)
