@@ -2,8 +2,5 @@
   <%= render "admin_dashboard" if current_user.admin? %>
   <%= render "staff_dashboard" if current_user.staff? %>
   <%= render "patient_dashboard" if current_user.patient? %>
-  <%= render "visitor_dashboard" unless current_user.role == 'visitor' %>
-</div>
-<div class="text-center mb-4">
-  <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-danger" %>
+  <%= render "visitor_dashboard" if current_user.role == 'visitor' %>
 </div>

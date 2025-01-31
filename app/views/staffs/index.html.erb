@@ -3,7 +3,7 @@
 <%= form_with url: staffs_path, method: :get, data: { turbo: true } do %>
   <div class="mb-3">
     <%= label_tag :staff_role, "Filter by Role", class: "form-label" %>
-    <%= select_tag :staff_role, options_for_select(User::ROLES.map { |role| [role.titleize, role] }),
+    <%= select_tag :staff_role, options_for_select(User.roles.keys.map { |role| [role.titleize, role] }),
                include_blank: true, class: "form-select" %>
   </div>
   <%= submit_tag "Filter", class: "btn btn-primary" %>

@@ -4,15 +4,19 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  validates :password, confirmation: true, allow_blank: true
   before_validation :set_default_role, on: :create
   before_validation :downcase_email
-  enum role: [:admin, :staff, :patient, :visitor]
+  enum :role, { admin: 0, staff: 1, patient: 2, visitor: 3 }
   validates :role, presence: true
 
   # Enum for staff roles
-  ROLES = %w[doctor pharmacist nurse clerk]
-  validates :name, presence: true
-  validates :staff_role, inclusion: { in: ROLES }, allow_nil: true
+  scope :staff, -> { where(role: :staff) }
+
+  enum :staff_role, { doctor: 0, pharmacist: 1, nurse: 2, clerk: 3 }, prefix: :staff
+
+  # Staff roles (only relevant for users with role: :staff)
+  validates :staff_role, presence: true, if: :staff? # Require staff_role for staff users
 
   # Add validation for uniqueness of email across all users, excluding the current user
   validates :email, presence: true, uniqueness: { case_sensitive: false }

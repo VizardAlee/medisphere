@@ -1,5 +1,4 @@
-<turbo-stream action="replace" target="staff_list">
-  <template>
-    <%= render 'staff_list', staff: @staffs %>
-  </template>
-</turbo-stream>
+<!-- app/views/staffs/index.turbo_stream.erb -->
+<%= turbo_stream.replace "staff_list" do %>
+  <%= render "staffs/staff_list", staff: @staffs %>
+<% end %>
