@@ -10,6 +10,8 @@ class User < ApplicationRecord
   enum :role, { admin: 0, staff: 1, patient: 2, visitor: 3 }
   validates :role, presence: true
 
+  attr_accessor :login
+
   # Enum for staff roles
   scope :staff, -> { where(role: :staff) }
 
@@ -21,8 +23,26 @@ class User < ApplicationRecord
   # Add validation for uniqueness of email across all users, excluding the current user
   validates :email, presence: true, uniqueness: { case_sensitive: false }
 
+  validates :phone, presence: true, uniqueness: true
   belongs_to :organization, optional: true
   has_many :health_records, dependent: :destroy
+
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    login = conditions.delete(:login)
+
+    Rails.logger.info("Login attempt with: #{login}")
+
+    if login.present?
+      user = where(conditions)
+        .where(["lower(email) = :value OR phone = :value", { value: login.downcase }])
+        .first
+      Rails.logger.info("User found: #{user.inspect}")
+      user
+    else
+      where(conditions).first
+    end
+  end
 
   private
 

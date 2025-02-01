@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
   include Pundit::Authorization
@@ -7,8 +6,6 @@ class ApplicationController < ActionController::Base
 
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :check_admin_profile, if: -> { current_user&.admin? && current_user.organization.nil? }
-  # before_action :authenticate_user, unless: :devise_controller?
-  # helper_method :current_user, :user_role
 
   def user_role
     current_user&.role || "visitor"
@@ -24,12 +21,11 @@ class ApplicationController < ActionController::Base
     when 'admin'
       resource.organization.nil? ? new_organization_path : root_path
     when 'staff'
-      dashboard_path # Ensure this route exists
+      dashboard_path
     else
       root_path
     end
   end
-  
 
   def current_organization
     @current_organization ||= current_user.organization
@@ -61,6 +57,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[role organization_id])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[role organization_id phone])
+    devise_parameter_sanitizer.permit(:sign_in, keys: %i[login password])
   end
 end

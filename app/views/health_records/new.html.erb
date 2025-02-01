@@ -1,0 +1,38 @@
+<%= form_with(model: @record, local: true) do |form| %>
+  <div class="container mt-4">
+    <h2>New Health Record</h2>
+    
+    <% if @record.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@record.errors.count, "error") %> prevented this record from being saved:</h4>
+        <ul>
+          <% @record.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+     <div class="mb-3">
+        <%= form.label :patient_id, 'Select Patient' %>
+        <%= form.collection_select :patient_id, Patient.all, :id, :name, { prompt: 'Select a patient' }, { class: 'form-select' } %>
+      </div>
+
+    <div class="mb-3">
+      <%= form.label :diagnosis, class: "form-label" %>
+      <%= form.text_area :diagnosis, class: "form-control", rows: 4, placeholder: "Enter diagnosis details" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :prescription, class: "form-label" %>
+      <%= form.text_area :prescription, class: "form-control", rows: 4, placeholder: "Enter prescribed medication" %>
+    </div>
+
+    <%= form.hidden_field :updated_by, value: current_user.id %>
+
+    <div class="d-flex justify-content-between">
+      <%= form.submit "Create Record", class: "btn btn-primary" %>
+      <%= link_to "Back", health_records_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+<% end %>

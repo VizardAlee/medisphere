@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_30_122227) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_01_140615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -39,16 +39,23 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_30_122227) do
     t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "organization_type", default: "hospital"
   end
 
   create_table "patients", force: :cascade do |t|
     t.string "name"
     t.integer "age"
     t.string "gender"
-    t.bigint "hospital_id", null: false
+    t.bigint "hospital_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "phone", null: false
+    t.string "email"
+    t.bigint "organization_id", null: false
+    t.index ["email"], name: "index_patients_on_email", unique: true
     t.index ["hospital_id"], name: "index_patients_on_hospital_id"
+    t.index ["organization_id"], name: "index_patients_on_organization_id"
+    t.index ["phone"], name: "index_patients_on_phone", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -63,13 +70,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_30_122227) do
     t.bigint "organization_id", null: false
     t.string "name", default: "", null: false
     t.integer "staff_role"
+    t.string "phone"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
+    t.index ["phone"], name: "index_users_on_phone", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "health_records", "patients"
   add_foreign_key "health_records", "users"
   add_foreign_key "patients", "hospitals"
+  add_foreign_key "patients", "organizations"
   add_foreign_key "users", "organizations"
 end

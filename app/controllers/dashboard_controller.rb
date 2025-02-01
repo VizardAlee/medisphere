@@ -7,15 +7,19 @@ class DashboardController < ApplicationController
       # Fetch staff and patients for the admin's organization
       @staffs = current_user.organization&.users&.where(role: :staff) || []
       @patients = current_user.organization&.patients || []
+      @records = HealthRecord.includes(:patient).all # Ensure records are available
     elsif current_user.staff?
       # Fetch health records assigned to the current staff
-      @records = HealthRecord.where(user_id: current_user.id) # Corrected from staff_id to user_id
+      @patients = current_user.organization&.patients || [] # Ensures @patients is never nil
     elsif current_user.patient?
       # Fetch health records belonging to the patient
       @records = HealthRecord.where(patient_id: current_user.id)
+      @patients = Patient.none
     else
       # Default for visitors (if applicable)
       @visitors = User.where(role: :visitor)
+      @patients = Patient.none
+      @records = HealthRecord.none
     end
   end
 end

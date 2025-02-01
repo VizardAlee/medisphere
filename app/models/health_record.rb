@@ -1,6 +1,6 @@
 class HealthRecord < ApplicationRecord
-  belongs_to :staff, class_name: "User", foreign_key: "staff_id", optional: true
-  belongs_to :patient, class_name: "User", foreign_key: "patient_id"
+  belongs_to :staff, class_name: "User", foreign_key: "updated_by", optional: true
+  belongs_to :patient
 
-  validates :description, :diagnosis, :treatment_plan, presence: true
+  validates :prescription, :diagnosis, presence: true
 end

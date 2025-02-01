@@ -1,27 +1,55 @@
 <div class="text-center mb-5">
-      <h1 class="display-4">Welcome, <%= current_user.email %>!</h1>
-      <p class="lead">You can manage health records for patients here.</p>
-    </div>
+  <h1 class="display-4">Welcome, <%= current_user.email %>!</h1>
+  <p class="lead">You can manage health records for patients here.</p>
+</div>
 
-    <!-- Health Records Section -->
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h2 class="mb-0">Patient Health Records</h2>
-      </div>
-      <div class="card-body">
-        <% if @records.any? %>
-          <ul class="list-group">
-            <% @records.each do |record| %>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span><%= record.patient.name %>: <%= record.diagnosis %></span>
-                <%= link_to "Edit", edit_health_record_path(record), class: "btn btn-sm btn-secondary" %>
-              </li>
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <h2 class="mb-0">Patient Health Records</h2>
+  </div>
+  <div class="card-body">
+    <% if @patients.any? %>
+      <ul class="list-group">
+        <% @patients.each do |patient| %>
+          <% patient_records = HealthRecord.where(patient_id: patient.id) %>
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <strong><%= patient.name %></strong>
+              <div>
+                <%= link_to "View Profile", patient_path(patient), class: "btn btn-sm btn-outline-primary" %>
+              </div>
+            </div>
+            <% if patient_records.any? %>
+              <ul class="list-group mt-2">
+                <% patient_records.each do |record| %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><%= record.diagnosis.truncate(50) %></span>
+                    <div>
+                      <%= link_to "View Details", patient_health_record_path(patient, record), class: "btn btn-sm btn-outline-primary" %>
+                      <%= link_to "Edit Record", edit_health_record_path(record), class: "btn btn-sm btn-secondary" %>
+                    </div>
+                  </li>
+                <% end %>
+              </ul>
+            <% else %>
+              <div class="alert alert-info mt-2">
+                No health records found for this patient.
+                <%= link_to "Add a record", new_health_record_path(patient_id: patient.id), class: "alert-link" %>
+              </div>
             <% end %>
-          </ul>
-        <% else %>
-          <div class="alert alert-info text-center" role="alert">
-            No health records found. <%= link_to "Add a record", new_health_record_path, class: "alert-link" %>.
-          </div>
+          </li>
         <% end %>
+      </ul>
+    <% else %>
+      <div class="alert alert-warning text-center">
+        No patients found.
+        <%= link_to "Register a patient", new_patient_path, class: "btn btn-sm btn-success" %>
       </div>
+    <% end %>
+
+    <%# Add the button to register a new patient at the top or bottom of the list %>
+    <div class="text-center mt-4">
+      <%= link_to "Add New Patient", new_patient_path, class: "btn btn-lg btn-primary" %>
     </div>
+  </div>
+</div>

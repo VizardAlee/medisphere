@@ -1,0 +1,102 @@
+<%# app/views/patients/show.html.erb %>
+
+<%# If the current user is an admin or staff, allow them to edit or view health records %>
+<% if current_user.admin? || current_user.staff? %>
+  <div class="mb-4">
+    <%= link_to 'Back to Patients List', patients_path, class: 'btn btn-secondary' %>
+    <%= link_to 'Edit Patient', edit_patient_path(@patient), class: 'btn btn-primary ml-2' %>
+    <%= link_to 'Manage Health Records', health_records_path(patient_id: @patient.id), class: 'btn btn-warning ml-2' %>
+  </div>
+<% end %>
+
+<h1>Patient Information</h1>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title"><%= @patient.name %></h5>
+    <p><strong>Email:</strong> <%= @patient.email %></p>
+    <p><strong>Phone:</strong> <%= @patient.phone %></p>
+    <p><strong>Age:</strong> <%= @patient.age %></p>
+    <p><strong>Gender:</strong> <%= @patient.gender.capitalize %></p>
+
+    <%# Display health records if the current user is admin, staff or the patient themselves %>
+    <% if current_user.admin? || current_user.staff? || current_user.id == @patient.id %>
+      <h4 class="mt-4">Health Records</h4>
+      <% if @health_records.any? %>
+        <table class="table table-bordered mt-2">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Diagnosis</th>
+              <th>Prescription</th>
+              <th>Updated By</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @health_records.each do |record| %>
+              <tr>
+                <td><%= record.created_at.strftime('%B %d, %Y') %></td>
+                <td><%= record.diagnosis %></td>
+                <td><%= record.prescription %></td>
+                <td>
+                  <% staff_member = User.find(record.updated_by) %>
+                  <% if staff_member %>
+                    <%= "#{staff_member.name} (#{staff_member.staff_role})" %>
+                  <% else %>
+                    Unknown
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p>No health records found for this patient.</p>
+      <% end %>
+    <% else %>
+      <p>You do not have permission to view health records.</p>
+    <% end %>
+
+    <%# Allow the patient to view their health records (if they are the patient themselves) %>
+    <% if current_user.patient? && current_user.id == @patient.id %>
+      <h4 class="mt-4">Your Health Records</h4>
+      <% if @health_records.any? %>
+        <table class="table table-bordered mt-2">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Diagnosis</th>
+              <th>Prescription</th>
+              <th>Updated By</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @health_records.each do |record| %>
+              <tr>
+                <td><%= record.created_at.strftime('%B %d, %Y') %></td>
+                <td><%= record.diagnosis %></td>
+                <td><%= record.prescription %></td>
+                <td>
+                  <% staff_member = User.find(record.updated_by) %>
+                  <% if staff_member %>
+                    <%= "#{staff_member.name} (#{staff_member.staff_role})" %>
+                  <% else %>
+                    Unknown
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p>You do not have any health records yet.</p>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# For patients, provide a simple option to go back to their dashboard or profile page %>
+<% if current_user.patient? && current_user.id == @patient.id %>
+  <div class="mt-4">
+    <%= link_to 'Back to My Dashboard', dashboard_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

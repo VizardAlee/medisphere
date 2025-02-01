@@ -1,0 +1,68 @@
+<!-- app/views/health_records/index.html.erb -->
+<div class="container mt-4">
+  <h1>Health Records</h1>
+
+  <% if @records.present? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Diagnosis</th>
+          <th>Prescription</th>
+          <th>Updated By</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @records.each do |record| %>
+          <tr>
+            <td><%= record.id %></td>
+            <td>
+              <% if record.patient.present? %>
+                <%= record.patient.name %>
+              <% else %>
+                <em>Unknown</em>
+              <% end %>
+            </td>
+            <td><%= record.diagnosis %></td>
+            <td><%= record.prescription %></td>
+            <td>
+              <%# Assuming you can fetch the updater's name using updated_by (or use a proper association) %>
+              <%= User.find_by(id: record.updated_by)&.name || "N/A" %>
+            </td>
+            <td><%= record.created_at.strftime("%B %d, %Y %I:%M %p") %></td>
+            <td>
+              <%= link_to 'Show', health_record_path(record), class: 'btn btn-sm btn-info' %>
+              <% if policy(record).update? %>
+                <%= link_to 'Edit', edit_health_record_path(record), class: 'btn btn-sm btn-primary' %>
+              <% end %>
+              <% if policy(record).destroy? %>
+                <%= link_to 'Delete', health_record_path(record),
+                      method: :delete,
+                      data: { confirm: 'Are you sure?' },
+                      class: 'btn btn-sm btn-danger' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No health records found.</p>
+  <% end %>
+
+  <% if policy(HealthRecord).create? %>
+    <div class="mt-3">
+      <%= link_to 'New Health Record', new_health_record_path, class: 'btn btn-success' %>
+    </div>
+  <% end %>
+
+  <!-- Link back to dashboard for admin and staff -->
+  <% if current_user.admin? || current_user.staff? %>
+    <div class="mt-3">
+      <%= link_to 'Back to Dashboard', dashboard_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+</div>

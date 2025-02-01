@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   resources :staffs
 
   resources :organizations
-  resources :patients, only: [:new, :create]
+  resources :patients, only: [:new, :create, :index, :show, :edit] do
+    resources :health_records, only: %i[new create show edit update destroy]
+  end
 
   resources :health_records, only: [:new, :create, :index, :show, :edit, :update, :destroy]
 
