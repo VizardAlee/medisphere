@@ -13,6 +13,10 @@ class PatientPolicy < ApplicationPolicy
     user.admin? || user.staff?
   end
 
+  def edit?
+    update?
+  end
+
   def destroy?
     user.admin?
   end

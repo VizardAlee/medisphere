@@ -1,32 +1,8 @@
-<h2>New Patient</h2>
-
-<%= form_with model: @patient do |form| %>
-  <div class="mb-3">
-    <%= form.label :name, "Full Name" %>
-    <%= form.text_field :name, class: "form-control", required: true %>
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">Register New Patient</h3>
+    </div>
+    <%= render 'form', patient: @patient %>
   </div>
-
-  <div class="mb-3">
-    <%= form.label :phone, "Phone Number" %>
-    <%= form.telephone_field :phone, class: "form-control", required: true %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :email, "Email (optional)" %>
-    <%= form.email_field :email, class: "form-control" %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :age %>
-    <%= form.number_field :age, class: "form-control", required: true %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :gender %>
-    <%= form.select :gender, ["Male", "Female", "Other"], {}, class: "form-control", required: true %>
-  </div>
-
-  <!-- Hospital is automatically assigned, so we remove the dropdown -->
-
-  <%= form.submit "Create Patient", class: "btn btn-primary" %>
-<% end %>
+</div>

@@ -16,14 +16,23 @@ class PatientsController < ApplicationController
 
   def edit
     authorize @patient
+    render :edit
   end
 
   def update
     authorize @patient
+
+    if @patient.update(patient_params)
+      redirect_to @patient, notice: "Patient was successfully updated."
+    else
+      render :edit,  alert: "Failed to update patient."
+    end
   end
 
   def destroy
     authorize @patient
+    @patient.destroy
+    redirect_to patients_path, notice: "Patient was successfully deleted."
   end
 
   def create
@@ -51,7 +60,14 @@ class PatientsController < ApplicationController
   private
 
   def patient_params
-    params.require(:patient).permit(:name, :phone, :email, :age, :gender)
+    params.require(:patient).permit(
+      :name, :phone, :email, :age, :gender,
+      :blood_type, :allergies, :chronic_conditions, :current_medications,
+      :immunization_records, :family_medical_history,
+      :emergency_contact_name, :emergency_contact_relationship, :emergency_contact_phone,
+      :insurance_provider, :insurance_policy_number, :organ_donor_status,
+      :address, :photo_url, :last_visit_date, :registration_date
+    )
   end
 
   def authorize_staff!

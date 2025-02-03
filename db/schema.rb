@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_01_140615) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_03_114549) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,6 +52,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_140615) do
     t.string "phone", null: false
     t.string "email"
     t.bigint "organization_id", null: false
+    t.string "blood_type"
+    t.text "allergies"
+    t.text "chronic_conditions"
+    t.text "current_medications"
+    t.text "immunization_records"
+    t.text "family_medical_history"
+    t.string "emergency_contact_name"
+    t.string "emergency_contact_relationship"
+    t.string "emergency_contact_phone"
+    t.string "insurance_provider"
+    t.string "insurance_policy_number"
+    t.boolean "organ_donor_status", default: false
+    t.string "address"
+    t.string "photo_url"
+    t.datetime "last_visit_date"
+    t.datetime "registration_date"
     t.index ["email"], name: "index_patients_on_email", unique: true
     t.index ["hospital_id"], name: "index_patients_on_hospital_id"
     t.index ["organization_id"], name: "index_patients_on_organization_id"
