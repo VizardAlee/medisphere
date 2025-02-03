@@ -1,7 +1,47 @@
-<div class="container">
-  <h1>Staff Details</h1>
-  <p><strong>Name:</strong> <%= @staff.name %></p>
-  <p><strong>Email:</strong> <%= @staff.email %></p>
-  <p><strong>Role:</strong> <%= @staff.role %></p>
-  <%= link_to "Back to home page", dashboard_path, class: "btn btn-primary" %>
+<!-- app/views/staffs/show.html.erb -->
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Staff Profile</h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <!-- Staff Photo (if available) -->
+        <div class="col-md-3 text-center">
+          <% if @staff.photo_url.present? %>
+            <img src="<%= @staff.photo_url %>" alt="Staff photo" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+          <% else %>
+            <img src="https://via.placeholder.com/150" alt="Placeholder" class="img-fluid rounded-circle mb-3">
+          <% end %>
+        </div>
+        <!-- Staff Information -->
+        <div class="col-md-9">
+          <h3><%= @staff.name %></h3>
+          <p><strong>Email:</strong> <%= @staff.email %></p>
+          <p><strong>Phone:</strong> <%= @staff.phone %></p>
+          <p>
+            <strong>Role:</strong> <%= @staff.role.humanize %> 
+            <% if @staff.staff? %>
+              (<%= @staff.staff_role.humanize %>)
+            <% end %>
+          </p>
+          <% if @staff.organization.present? %>
+            <p><strong>Organization:</strong> <%= @staff.organization.name %></p>
+          <% end %>
+          <%# Optional fields if available %>
+          <% if @staff.respond_to?(:qualifications) && @staff.qualifications.present? %>
+            <p><strong>Qualifications:</strong> <%= @staff.qualifications %></p>
+          <% end %>
+          <% if @staff.respond_to?(:years_of_experience) && @staff.years_of_experience.present? %>
+            <p><strong>Experience:</strong> <%= @staff.years_of_experience %> years</p>
+          <% end %>
+          <p><strong>Joined on:</strong> <%= @staff.created_at.strftime("%B %d, %Y") %></p>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer text-right">
+      <%= link_to "Back to Home Page", dashboard_path, class: "btn btn-secondary" %>
+      <%= link_to "Edit Profile", edit_staff_path(@staff), class: "btn btn-primary ml-2" %>
+    </div>
+  </div>
 </div>

@@ -4,18 +4,18 @@
       <% staff.each do |member| %>
         <li id="<%= dom_id(member) %>" class="list-group-item d-flex justify-content-between align-items-center">
           <span>
-            <%= link_to member.name, staff_path(member) %> 
+            <%= link_to member.name, staff_path(member), data: { turbo: false }, class: "text-decoration-none" %>
             (<%= member.staff_role.present? ? member.staff_role.humanize : "Unknown Role" %>)
           </span>
+          
           <div>
-            <%= link_to "Edit", edit_staff_path(member), class: "btn btn-sm btn-secondary" %>
-            <%= button_to "Delete", staff_path(member), method: :delete, 
-                  data: { turbo_confirm: "Are you sure?" }, class: "btn btn-sm btn-danger" %>
+            <%= link_to "Edit", edit_staff_path(member), data: { turbo: false }, class: "btn btn-sm btn-outline-secondary me-2" %>
+            <%= button_to "Delete", staff_path(member), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this staff?" }, class: "btn btn-sm btn-outline-danger" %>
           </div>
         </li>
       <% end %>
     </ul>
   <% else %>
-    <div class="alert alert-info">No staff found for the selected role.</div>
+    <div class="alert alert-info mt-3">No staff found for the selected role.</div>
   <% end %>
 <% end %>

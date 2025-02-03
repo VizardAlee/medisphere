@@ -33,7 +33,6 @@ class StaffsController < ApplicationController
     @staff = User.new(staff_params.merge(role: :staff, organization_id: current_user.organization_id))
     @staff.role = :staff  # Ensure the role is always 'staff'
     @staff.organization_id = current_user.organization_id # Assign organization
-
     @staff.staff_role = User.staff_roles[params[:user][:staff_role]] # Assign staff role
 
     if @staff.save
@@ -55,9 +54,10 @@ class StaffsController < ApplicationController
   end
 
   def update
+    @staff = User.find(params[:id])
     if @staff.update(staff_params)
       flash[:notice] = "Staff updated successfully."
-      redirect_to staffs_path # Updated to match your route
+      redirect_to staff_path(@staff) # Updated to match your route
     else
       Rails.logger.debug @staff.errors.full_messages
       flash[:alert] = "Failed to update staff."
@@ -100,7 +100,7 @@ class StaffsController < ApplicationController
     # Permit the staff_role field in the params
     Rails.logger.debug "Received staff_role: #{params[:user][:staff_role].inspect}"
 
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :staff_role)
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :staff_role, :qualification, :years_of_experience, :phone, :photo_url)
   end
 
   def authorize_admin
