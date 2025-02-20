@@ -1,87 +1,122 @@
 <div class="card-body">
-      <%= form_with model: @patient, local: true do |form| %>
-        <!-- Basic Information -->
-        <h5 class="text-secondary mb-3">Basic Information</h5>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <%= form.label :name, "Full Name", class: "form-label" %>
-            <%= form.text_field :name, class: "form-control", required: true, placeholder: "Enter full name" %>
-          </div>
-          <div class="col-md-6 mb-3">
-            <%= form.label :phone, "Phone Number", class: "form-label" %>
-            <%= form.telephone_field :phone, class: "form-control", required: true, placeholder: "e.g. +234..." %>
-          </div>
-        </div>
+  <%= form_with model: @patient, local: true, html: { multipart: true } do |form| %>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <%= form.label :email, "Email (optional)", class: "form-label" %>
-            <%= form.email_field :email, class: "form-control", placeholder: "example@mail.com" %>
-          </div>
-          <div class="col-md-3 mb-3">
-            <%= form.label :age, class: "form-label" %>
-            <%= form.number_field :age, class: "form-control", required: true, placeholder: "e.g. 25" %>
-          </div>
-          <div class="col-md-3 mb-3">
-            <%= form.label :gender, class: "form-label" %>
-            <%= form.select :gender, ["Male", "Female", "Other"], {}, class: "form-select", required: true %>
-          </div>
-        </div>
-
-        <!-- Medical Information -->
-        <h5 class="text-secondary mt-4 mb-3">Medical Information</h5>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <%= form.label :blood_type, "Blood Type", class: "form-label" %>
-            <%= form.select :blood_type, ['A', 'B', 'AB', 'O'], { include_blank: 'Select blood type' }, class: "form-select" %>
-          </div>
-          <div class="col-md-8 mb-3">
-            <%= form.label :allergies, class: "form-label" %>
-            <%= form.text_area :allergies, class: "form-control", placeholder: "List any allergies" %>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <%= form.label :chronic_conditions, "Chronic Conditions", class: "form-label" %>
-          <%= form.text_area :chronic_conditions, class: "form-control", placeholder: "Specify chronic conditions, if any" %>
-        </div>
-
-        <div class="mb-3">
-          <%= form.label :current_medications, "Current Medications", class: "form-label" %>
-          <%= form.text_area :current_medications, class: "form-control", placeholder: "List current medications" %>
-        </div>
-
-        <!-- Emergency Contact -->
-        <h5 class="text-secondary mt-4 mb-3">Emergency Contact Information</h5>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <%= form.label :emergency_contact_name, "Contact Name", class: "form-label" %>
-            <%= form.text_field :emergency_contact_name, class: "form-control", placeholder: "Name of emergency contact" %>
-          </div>
-          <div class="col-md-4 mb-3">
-            <%= form.label :emergency_contact_relationship, "Relationship", class: "form-label" %>
-            <%= form.text_field :emergency_contact_relationship, class: "form-control", placeholder: "e.g. Parent, Friend" %>
-          </div>
-          <div class="col-md-4 mb-3">
-            <%= form.label :emergency_contact_phone, "Phone", class: "form-label" %>
-            <%= form.telephone_field :emergency_contact_phone, class: "form-control", placeholder: "+234..." %>
-          </div>
-        </div>
-
-        <!-- Administrative Information -->
-        <h5 class="text-secondary mt-4 mb-3">Administrative Details</h5>
-        <div class="mb-3">
-          <%= form.label :address, "Address", class: "form-label" %>
-          <%= form.text_field :address, class: "form-control", placeholder: "e.g. No. 5 Hospital Road, Kano" %>
-        </div>
-
-        <div class="form-check mb-4">
-          <%= form.check_box :organ_donor_status, { class: "form-check-input" }, true, false %>
-          <%= form.label :organ_donor_status, "Organ Donor?", class: "form-check-label" %>
-        </div>
-
-        <div class="d-grid">
-          <%= form.submit @patient.new_record? ? "Create Patient" : "Update Patient", class: "btn btn-primary btn-lg" %>
-        </div>
-      <% end %>
+    <!-- Basic Information -->
+    <h5 class="text-secondary mb-3">Basic Information</h5>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :name, "Full Name", class: "form-label" %>
+        <%= form.text_field :name, class: "form-control", required: true, placeholder: "Enter full name" %>
+      </div>
+      <div class="col-md-6 mb-3">
+        <%= form.label :phone, "Phone Number", class: "form-label" %>
+        <%= form.telephone_field :phone, class: "form-control", required: true, placeholder: "e.g. +234..." %>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :email, "Email (optional)", class: "form-label" %>
+        <%= form.email_field :email, class: "form-control", placeholder: "example@mail.com" %>
+      </div>
+      <div class="col-md-3 mb-3">
+        <%= form.label :age, "Age", class: "form-label" %>
+        <%= form.number_field :age, class: "form-control", required: true, placeholder: "e.g. 25" %>
+      </div>
+      <div class="col-md-3 mb-3">
+        <%= form.label :gender, "Gender", class: "form-label" %>
+        <%= form.select :gender, ["Male", "Female", "Other"], {}, class: "form-select", required: true %>
+      </div>
+    </div>
+
+    <!-- Upload Photo (Active Storage) -->
+    <div class="mb-3">
+      <%= form.label :photo, "Upload Photo", class: "form-label" %>
+      <%= form.file_field :photo, class: "form-control" %>
+    </div>
+
+    <!-- Medical Information -->
+    <h5 class="text-secondary mt-4 mb-3">Medical Information</h5>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <%= form.label :blood_type, "Blood Type", class: "form-label" %>
+        <%= form.select :blood_type, ['A+', 'B+', 'AB+', 'O+', 'A-', 'B-', 'AB-', 'O-'], { include_blank: 'Select blood type' }, class: "form-select" %>
+      </div>
+      <div class="col-md-8 mb-3">
+        <%= form.label :allergies, "Allergies", class: "form-label" %>
+        <%= form.text_area :allergies, class: "form-control", placeholder: "List any allergies" %>
+      </div>
+    </div>
+    <div class="mb-3">
+      <%= form.label :chronic_conditions, "Chronic Conditions", class: "form-label" %>
+      <%= form.text_area :chronic_conditions, class: "form-control", placeholder: "Specify chronic conditions, if any" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :current_medications, "Current Medications", class: "form-label" %>
+      <%= form.text_area :current_medications, class: "form-control", placeholder: "List current medications" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :immunization_records, "Immunization Records", class: "form-label" %>
+      <%= form.text_area :immunization_records, class: "form-control", placeholder: "Enter immunization history" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :family_medical_history, "Family Medical History", class: "form-label" %>
+      <%= form.text_area :family_medical_history, class: "form-control", placeholder: "Enter family medical history" %>
+    </div>
+
+    <!-- Emergency Contact Information -->
+    <h5 class="text-secondary mt-4 mb-3">Emergency Contact Information</h5>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <%= form.label :emergency_contact_name, "Contact Name", class: "form-label" %>
+        <%= form.text_field :emergency_contact_name, class: "form-control", placeholder: "Name of emergency contact" %>
+      </div>
+      <div class="col-md-4 mb-3">
+        <%= form.label :emergency_contact_relationship, "Relationship", class: "form-label" %>
+        <%= form.text_field :emergency_contact_relationship, class: "form-control", placeholder: "e.g. Parent, Sibling" %>
+      </div>
+      <div class="col-md-4 mb-3">
+        <%= form.label :emergency_contact_phone, "Phone", class: "form-label" %>
+        <%= form.telephone_field :emergency_contact_phone, class: "form-control", placeholder: "e.g. +234..." %>
+      </div>
+    </div>
+
+    <!-- Insurance Information -->
+    <h5 class="text-secondary mt-4 mb-3">Insurance Information</h5>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :insurance_provider, "Insurance Provider", class: "form-label" %>
+        <%= form.text_field :insurance_provider, class: "form-control", placeholder: "Enter insurance provider" %>
+      </div>
+      <div class="col-md-6 mb-3">
+        <%= form.label :insurance_policy_number, "Policy Number", class: "form-label" %>
+        <%= form.text_field :insurance_policy_number, class: "form-control", placeholder: "Enter policy number" %>
+      </div>
+    </div>
+
+    <!-- Administrative Details -->
+    <h5 class="text-secondary mt-4 mb-3">Administrative Details</h5>
+    <div class="mb-3">
+      <%= form.label :address, "Address", class: "form-label" %>
+      <%= form.text_field :address, class: "form-control", placeholder: "e.g. 123 Main St, City" %>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :last_visit_date, "Last Visit Date", class: "form-label" %>
+        <%= form.date_field :last_visit_date, class: "form-control" %>
+      </div>
+      <div class="col-md-6 mb-3">
+        <%= form.label :registration_date, "Registration Date", class: "form-label" %>
+        <%= form.date_field :registration_date, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-check mb-4">
+      <%= form.check_box :organ_donor_status, { class: "form-check-input" }, true, false %>
+      <%= form.label :organ_donor_status, "Organ Donor?", class: "form-check-label" %>
+    </div>
+
+    <div class="d-grid">
+      <%= form.submit @patient.new_record? ? "Create Patient" : "Update Patient", class: "btn btn-primary btn-lg" %>
+    </div>
+
+  <% end %>
+</div>

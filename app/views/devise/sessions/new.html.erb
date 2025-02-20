@@ -7,7 +7,7 @@
           <p class="text-muted">Welcome back! Please log in to your account</p>
         </div>
         <div class="card-body">
-          <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "form" }) do |f| %>
+          <%= form_for(resource, as: resource_name, url: session_path(resource_name), method: :post, data: { turbo: false }) do |f| %>
             <!-- Phone or Email Field -->
             <div class="form-group mb-3">
               <%= f.label :login, "Phone Number or Email", class: "form-label" %>

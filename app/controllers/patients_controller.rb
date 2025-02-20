@@ -1,22 +1,39 @@
 class PatientsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :authorize_staff!
-  before_action :set_patient, only: %i[show edit update destroy]
+  before_action :authenticate_user!, except: [:show]
+  before_action :set_patient, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_staff!,   except: [:show]
 
   def new
     @patient = Patient.new
   end
 
   def show
-    authorize @patient  # Ensure proper authorization based on your policy
+    if user_signed_in? && current_user.staff?
+      unless @patient.organization_id == current_user.organization_id
+        redirect_to root_path, alert: "Unauthorized (different org)."
+        return
+      end
+      # Staff is authorized => continue to show
+      @health_records = @patient.health_records
+      return
+    end
 
-    # If you're displaying additional details like health records, you can retrieve them here
-    @health_records = @patient.health_records.includes(:staff)
+    if patient_signed_in?
+      # Only allow if current_patient == the @patient
+      if current_patient.id != @patient.id
+        redirect_to root_path, alert: "Unauthorized (not your patient record)."
+      else
+        @health_records = @patient.health_records
+      end
+      return
+    end
+
+    # -- 3) If neither staff nor correct patient => not authorized
+    redirect_to new_patient_session_path, alert: "Please log in as staff or the correct patient."
   end
 
   def edit
     authorize @patient
-    render :edit
   end
 
   def update
@@ -37,19 +54,25 @@ class PatientsController < ApplicationController
 
   def create
     @patient = Patient.new(patient_params)
-    # @patient.role = :patient
     @patient.organization_id = current_user.organization_id
 
+    temporary_password = SecureRandom.hex(8)
+    @patient.password = temporary_password
+    @patient.password_confirmation =  temporary_password
+
     if @patient.save
-      redirect_to dashboard_path, notice: "Patient successfully added."
+      PatientMailer.with(patient: @patient, temporary_password: temporary_password).send_login_details.deliver_later if @patient.email.present?
+
+      flash[:notice] = "Patient successfully added. Login details sent to the patient."
+      redirect_to dashboard_path
     else
       render :new, alert: "Failed to add patient."
     end
   end
 
   def index
-    @patients = Patient.all.includes(:health_records)
-    @records = HealthRecord.includes(:patient).all
+    @patients = current_user.organization.patients.includes(:health_records)
+    @records = HealthRecord.includes(:patient).where(patients: { organization_id: current_user.organization_id })
 
     respond_to do |format|
       format.html  # Renders the index.html.erb by default
@@ -71,12 +94,27 @@ class PatientsController < ApplicationController
   end
 
   def authorize_staff!
-    redirect_to root_path, alert: "Unauthorized access." unless current_user.staff?
+    unless user_signed_in? && current_user.staff?
+      redirect_to root_path, alert: "Unauthorized access."
+    end
   end
 
   def set_patient
-    @patient = Patient.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    redirect_to patients_path, alert: 'Patient not found.'
+    @patient = Patient.find_by(id: params[:id])
+    if @patient.nil?
+      redirect_to patients_path, alert: "Patient not found."
+    end
+  end
+
+  def authorize_patient_show!
+    return if user_signed_in? && current_user.staff?
+
+    # else must be a logged-in patient looking at themselves
+    if patient_signed_in?
+      # Ensure the patient is viewing their own profile
+      return if current_patient.present? && current_patient.id == params[:id].to_i
+    end
+
+    redirect_to root_path, alert: "Unauthorized"
   end
 end

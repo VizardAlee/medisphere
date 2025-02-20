@@ -13,11 +13,11 @@ class HealthRecordPolicy < ApplicationPolicy
   end
 
   def update?
-    user.admin? || user.staff?
+    user.admin? || user.staff? && record.patient.organization_id == user.organization_id
   end
 
   def destroy?
-    user.admin?
+    user.admin? && record.patient.organization_id == user.organization_id
   end
 
   class Scope < ApplicationPolicy::Scope

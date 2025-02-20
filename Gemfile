@@ -68,3 +68,5 @@ gem "rspec-rails", "~> 7.1"
 gem "pundit"
 
 gem "letter_opener", group: :development
+
+gem "bcrypt", "~> 3.1.7"

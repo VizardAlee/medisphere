@@ -1,0 +1,2 @@
+module SharedSessionsHelper
+end

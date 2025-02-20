@@ -16,6 +16,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       user.organization_id = @organization.id
   
       Rails.logger.debug "User role before saving: #{user.role}"
+
       if user.save
         Rails.logger.debug "User role after saving: #{user.role}"
 
@@ -26,6 +27,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         redirect_to new_user_registration_path
       end
     else
+      Rails.logger.error "Organization creation failed: #{@organization.errors.full_messages.join(', ')}"
       flash[:alert] = "Error creating organization."
       redirect_to new_user_registration_path
     end
@@ -35,6 +37,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def sign_up_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :role)
+    params.require(:user).permit(:name, :email, :phone, :password, :password_confirmation, :role)
   end
 end

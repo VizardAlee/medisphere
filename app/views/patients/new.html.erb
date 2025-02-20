@@ -1,8 +1,8 @@
 <div class="container mt-5">
   <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header">
       <h3 class="mb-0">Register New Patient</h3>
+      <%= render "form", patient: @patient %>
     </div>
-    <%= render 'form', patient: @patient %>
   </div>
 </div>

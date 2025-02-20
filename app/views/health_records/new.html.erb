@@ -15,7 +15,7 @@
 
      <div class="mb-3">
         <%= form.label :patient_id, 'Select Patient' %>
-        <%= form.collection_select :patient_id, Patient.all, :id, :name, { prompt: 'Select a patient' }, { class: 'form-select' } %>
+        <%= form.collection_select :patient_id, current_user.organization.patients, :id, :name, { prompt: 'Select a patient' }, { class: 'form-select' } %>
       </div>
 
     <div class="mb-3">

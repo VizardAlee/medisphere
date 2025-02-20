@@ -29,8 +29,8 @@
             <p><strong>Organization:</strong> <%= @staff.organization.name %></p>
           <% end %>
           <%# Optional fields if available %>
-          <% if @staff.respond_to?(:qualifications) && @staff.qualifications.present? %>
-            <p><strong>Qualifications:</strong> <%= @staff.qualifications %></p>
+          <% if @staff.respond_to?(:qualification) && @staff.qualification.present? %>
+            <p><strong>Qualifications:</strong> <%= @staff.qualification %></p>
           <% end %>
           <% if @staff.respond_to?(:years_of_experience) && @staff.years_of_experience.present? %>
             <p><strong>Experience:</strong> <%= @staff.years_of_experience %> years</p>

@@ -67,7 +67,8 @@
             <h5 class="card-title">Welcome, Visitor!</h5>
             <p class="card-text">Sign up or log in to access more features.</p>
             <a href="<%= new_user_registration_path %>" class="btn btn-primary">Sign Up</a>
-            <a href="<%= new_user_session_path %>" class="btn btn-secondary">Log In</a>
+            <%= link_to "User Login", new_session_path(:user), class: "btn btn-primary" %>
+            <%= link_to "Patient Login", new_session_path(:patient), class: "btn btn-secondary" %>
           </div>
         </div>
       </div>

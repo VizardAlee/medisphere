@@ -5,7 +5,7 @@ class HealthRecordsController < ApplicationController
 
   def index
     @records = if current_user.admin? || current_user.staff?
-                 policy_scope(HealthRecord)
+                 policy_scope(HealthRecord).includes(:patient).where(patients: { organization_id: current_user.organization_id })
                elsif current_user.patient?
                  policy_scope(HealthRecord).where(patient_id: current_user.id)
                else

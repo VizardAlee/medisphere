@@ -1,81 +1,107 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
-    <!-- Brand Logo -->
+    <!-- Brand / Logo -->
     <a class="navbar-brand" href="<%= root_path %>">
-      MediSphere
+      <% if user_signed_in? && current_user.organization.present? %>
+        <%= current_user.organization.name %>
+      <% else %>
+        MediSphere
+      <% end %>
     </a>
 
-    <!-- Navbar Toggler for Mobile -->
+    <!-- Mobile Toggler -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Navbar Items -->
+    <!-- Navbar Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
-        <!-- Common Links -->
+
+        <!-- Always show "Home" -->
         <li class="nav-item">
           <a class="nav-link" href="<%= root_path %>">Home</a>
         </li>
 
+        <%# ----------------------------------------- %>
+        <%# CASE 1: If a regular User (admin/staff) is signed in %>
         <% if user_signed_in? %>
           <% if current_user.admin? %>
-            <!-- Admin Links -->
+            <!-- Admin-Specific Links -->
             <li class="nav-item">
               <a class="nav-link" href="<%= staffs_path %>">Manage Staff</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Manage Hospitals</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Manage Pharmacies</a>
-            </li>
+            <!-- Possibly more admin links here... -->
           <% elsif current_user.staff? %>
-            <!-- Staff Links -->
+            <!-- Staff-Specific Links -->
             <li class="nav-item">
-              <a class="nav-link" href="#">Patients</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Prescriptions</a>
-            </li>
-          <% elsif current_user.patient? %>
-            <!-- Patient Links -->
-            <li class="nav-item">
-              <a class="nav-link" href="#">My Health Records</a>
-            </li>
-          <% elsif current_user.emergency_respondent? %>
-            <!-- Emergency Respondent Links -->
-            <li class="nav-item">
-              <a class="nav-link" href="#">Emergency Lookup</a>
+              <a class="nav-link" href="<%= patients_path %>">Patients</a>
             </li>
           <% end %>
-        <% else %>
-          <!-- Visitor Links -->
+
+        <%# ----------------------------------------- %>
+        <%# CASE 2: If a Patient is signed in (Devise for Patient model) %>
+        <% elsif patient_signed_in? %>
+          <!-- Patient-Specific Links -->
           <li class="nav-item">
-            <a class="nav-link" href="<%= new_user_registration_path %>">Sign Up</a>
+            <%= link_to "My Profile", patient_path(current_patient), class: "nav-link" %>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<%= new_user_session_path %>">Sign In</a>
+            <%= link_to "My Health Records", patient_health_records_path(current_patient), class: "nav-link" %>
+          </li>
+
+        <%# ----------------------------------------- %>
+        <%# CASE 3: No one is signed in => Visitor %>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "Sign Up (Staff)", new_user_registration_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign In (Staff)", new_user_session_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Patient Login", new_patient_session_path, class: "nav-link" %>
           </li>
         <% end %>
       </ul>
 
-      <!-- Right Side: User Profile Dropdown -->
-      <% if user_signed_in? %>
-        <ul class="navbar-nav">
+      <!-- Right Side: Logout/Profile -->
+      <ul class="navbar-nav">
+        <%# If a User is signed in, show user’s name + dropdown %>
+        <% if user_signed_in? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               <%= current_user.name || "Profile" %>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="<%= edit_user_registration_path %>">Edit Profile</a></li>
               <li>
-                <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+                <%= link_to "Edit Profile", edit_user_registration_path, class: "dropdown-item" %>
+              </li>
+              <li>
+                <%= button_to "Logout", destroy_user_session_path,
+                              method: :delete, class: "dropdown-item" %>
               </li>
             </ul>
           </li>
-        </ul>
-      <% end %>
+
+        <%# If a Patient is signed in, show patient’s name + logout %>
+        <% elsif patient_signed_in? %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <%= current_patient.name || "My Account" %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <%= link_to "My Profile", patient_path(current_patient), class: "dropdown-item" %>
+              </li>
+              <li>
+                <%= button_to "Logout", destroy_patient_session_path,
+                              method: :delete, class: "dropdown-item" %>
+              </li>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
 </nav>

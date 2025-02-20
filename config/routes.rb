@@ -1,8 +1,22 @@
 Rails.application.routes.draw do
+  get  '/login',  to: 'shared_sessions#new',     as: :login
+  post '/login',  to: 'shared_sessions#create'
+  delete '/logout', to: 'shared_sessions#destroy', as: :logout
+
+  devise_for :patients,
+    skip: [:registrations, :passwords, :confirmations],  # or skip what you want
+    controllers: {
+      sessions: "patients/sessions"
+    }
+
   devise_for :users, controllers: { registrations: "users/registrations" }
+  # devise_for :patients
+
   resources :staffs
 
+
   resources :organizations
+
   resources :patients, only: [:new, :create, :index, :show, :edit, :update] do
     resources :health_records, only: %i[new create show edit update destroy]
   end
@@ -12,6 +26,12 @@ Rails.application.routes.draw do
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root
     get "dashboard", to: "dashboard#index", as: :dashboard
+  end
+
+  devise_scope :patient do
+    authenticated :patient do
+      root to: "patients#show", as: :authenticated_patient_root
+    end
   end
 
   # get 'staff/dashboard', to: 'staffs#dashboard', as: :staff_dashboard
