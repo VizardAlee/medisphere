@@ -1,31 +1,60 @@
-<div class="text-center mb-5">
-  <h1 class="display-4">Patient Records</h1>
-  <p class="lead">Here is the list of all patients.</p>
-</div>
-
-<div class="card shadow-sm">
-  <div class="card-header bg-primary text-white">
-    <h2 class="mb-0">Patient List</h2>
+<div class="container mt-4">
+  <div class="text-center mb-4">
+    <h1 class="display-5">Patient Records</h1>
+    <p class="lead">Browse and manage patient records efficiently.</p>
   </div>
-  <div class="card-body">
-    <% if @patients.any? %>
-      <ul class="list-group">
-        <% @patients.each do |patient| %>
-          <li class="list-group-item">
-            <div class="d-flex justify-content-between align-items-center">
-              <strong><%= patient.name %></strong>
-              <div>
-                <%= link_to "View Profile", patient_path(patient), class: "btn btn-sm btn-outline-primary" %>
-              </div>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <div class="alert alert-warning text-center">
-        No patients found.
-        <%= link_to "Register a patient", new_patient_path, class: "btn btn-sm btn-success" %>
-      </div>
+
+  <div class="d-flex justify-content-between mb-3">
+    <%= form_with url: patients_path, method: :get, local: true, class: "d-flex w-50" do |f| %>
+      <%= f.text_field :search, value: params[:search], class: "form-control me-2", placeholder: "Search by name..." %>
+      <%= f.submit "Search", class: "btn btn-outline-primary" %>
     <% end %>
+
+    <%= link_to "Register New Patient", new_patient_path, class: "btn btn-success" %>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Patient List</h2>
+    </div>
+    <div class="card-body">
+      <% if @patients.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @patients.each_with_index do |patient, index| %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= patient.name %></td>
+                  <td><%= patient.phone || "N/A" %></td>
+                  <td><%= patient.email || "N/A" %></td>
+                  <td>
+                    <%= link_to "View", patient_path(patient), class: "btn btn-sm btn-outline-primary" %>
+                    <%= link_to "Edit", edit_patient_path(patient), class: "btn btn-sm btn-outline-secondary" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-3">
+          <%= paginate @patients if @patients.respond_to?(:total_pages) %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning text-center">
+          No patients found.
+          <%= link_to "Register a patient", new_patient_path, class: "btn btn-sm btn-success" %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

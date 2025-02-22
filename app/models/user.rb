@@ -10,6 +10,7 @@ class User < ApplicationRecord
   enum :role, { admin: 0, staff: 1, patient: 2, visitor: 3 }
   validates :role, presence: true
 
+  has_one_attached :photo
   attr_accessor :login
 
   # Enum for staff roles

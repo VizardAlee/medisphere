@@ -43,7 +43,13 @@ class ApplicationController < ActionController::Base
     unless patient_signed_in?
       redirect_to new_patient_session_path, alert: "You need to sign in as a patient."
     end
-  end  
+  end
+  
+  def authenticate_user_or_patient!
+    unless current_user || current_patient
+      redirect_to new_user_session_path, alert: "You need to sign in first."
+    end
+  end
 
   helper_method :current_organization
 

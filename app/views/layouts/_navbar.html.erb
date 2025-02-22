@@ -18,56 +18,35 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
 
-        <!-- Always show "Home" -->
-        <li class="nav-item">
-          <a class="nav-link" href="<%= root_path %>">Home</a>
-        </li>
-
-        <%# ----------------------------------------- %>
-        <%# CASE 1: If a regular User (admin/staff) is signed in %>
         <% if user_signed_in? %>
           <% if current_user.admin? %>
-            <!-- Admin-Specific Links -->
             <li class="nav-item">
               <a class="nav-link" href="<%= staffs_path %>">Manage Staff</a>
             </li>
-            <!-- Possibly more admin links here... -->
           <% elsif current_user.staff? %>
-            <!-- Staff-Specific Links -->
             <li class="nav-item">
               <a class="nav-link" href="<%= patients_path %>">Patients</a>
             </li>
           <% end %>
-
-        <%# ----------------------------------------- %>
-        <%# CASE 2: If a Patient is signed in (Devise for Patient model) %>
         <% elsif patient_signed_in? %>
-          <!-- Patient-Specific Links -->
           <li class="nav-item">
-            <%= link_to "My Profile", patient_path(current_patient), class: "nav-link" %>
+            <a class="nav-link" href="<%= patient_health_records_path(current_patient) %>">My Health Records</a>
           </li>
-          <li class="nav-item">
-            <%= link_to "My Health Records", patient_health_records_path(current_patient), class: "nav-link" %>
-          </li>
-
-        <%# ----------------------------------------- %>
-        <%# CASE 3: No one is signed in => Visitor %>
         <% else %>
           <li class="nav-item">
-            <%= link_to "Sign Up (Staff)", new_user_registration_path, class: "nav-link" %>
+            <a class="nav-link" href="<%= new_user_registration_path %>">Sign Up (Staff)</a>
           </li>
           <li class="nav-item">
-            <%= link_to "Sign In (Staff)", new_user_session_path, class: "nav-link" %>
+            <a class="nav-link" href="<%= new_user_session_path %>">Sign In (Staff)</a>
           </li>
           <li class="nav-item">
-            <%= link_to "Patient Login", new_patient_session_path, class: "nav-link" %>
+            <a class="nav-link" href="<%= new_patient_session_path %>">Patient Login</a>
           </li>
         <% end %>
       </ul>
 
-      <!-- Right Side: Logout/Profile -->
+      <!-- Right Side: Profile Dropdown -->
       <ul class="navbar-nav">
-        <%# If a User is signed in, show user’s name + dropdown %>
         <% if user_signed_in? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -75,16 +54,14 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <%= link_to "Edit Profile", edit_user_registration_path, class: "dropdown-item" %>
+                <%= link_to "View Profile", staff_path(current_user), class: "dropdown-item" %>
               </li>
               <li>
-                <%= button_to "Logout", destroy_user_session_path,
-                              method: :delete, class: "dropdown-item" %>
+                <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
               </li>
             </ul>
           </li>
 
-        <%# If a Patient is signed in, show patient’s name + logout %>
         <% elsif patient_signed_in? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -92,11 +69,10 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <%= link_to "My Profile", patient_path(current_patient), class: "dropdown-item" %>
+                <%= link_to "View Profile", patient_path(current_patient), class: "dropdown-item" %>
               </li>
               <li>
-                <%= button_to "Logout", destroy_patient_session_path,
-                              method: :delete, class: "dropdown-item" %>
+                <%= button_to "Logout", destroy_patient_session_path, method: :delete, class: "dropdown-item" %>
               </li>
             </ul>
           </li>

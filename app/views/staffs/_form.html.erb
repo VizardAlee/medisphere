@@ -1,78 +1,97 @@
 <!-- app/views/staffs/_form.html.erb -->
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">
-            <%= @staff.new_record? ? "Create Staff" : "Edit Staff" %>
-          </h2>
+    <div class="col-lg-8 col-md-10">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">
+            <%= @staff.new_record? ? "Add New Staff" : "Edit Staff Details" %>
+          </h3>
         </div>
         <div class="card-body">
           <%= form_with model: @staff, url: @staff.persisted? ? staff_path(@staff) : staffs_path, local: true do |f| %>
-            
-            <!-- Name Field -->
-            <div class="mb-3">
-              <%= f.label :name, class: "form-label" %>
-              <%= f.text_field :name, class: "form-control", placeholder: "Staff Name", required: true %>
+
+            <div class="row">
+              <!-- Name Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :name, "Full Name", class: "form-label fw-bold" %>
+                <%= f.text_field :name, class: "form-control", placeholder: "Enter staff name", required: true %>
+              </div>
+
+              <!-- Email Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :email, "Email Address", class: "form-label fw-bold" %>
+                <%= f.email_field :email, class: "form-control", placeholder: "Enter email", required: true %>
+              </div>
             </div>
 
-            <!-- Email Field -->
-            <div class="mb-3">
-              <%= f.label :email, class: "form-label" %>
-              <%= f.email_field :email, class: "form-control", placeholder: "Staff Email", required: true %>
+            <div class="row">
+              <!-- Phone Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :phone, "Phone Number", class: "form-label fw-bold" %>
+                <%= f.telephone_field :phone, class: "form-control", placeholder: "Enter phone number", required: true %>
+              </div>
+
+              <!-- Staff Role Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :staff_role, "Staff Role", class: "form-label fw-bold" %>
+                <%= f.select :staff_role, 
+                      options_for_select(
+                        User.staff_roles.keys.map { |role| [role.humanize, role] },
+                        @staff.staff_role
+                      ), 
+                      { prompt: "Select a role" }, 
+                      class: "form-select", 
+                      required: true %>
+              </div>
             </div>
 
-            <!-- Phone Field -->
-            <div class="mb-3">
-              <%= f.label :phone, class: "form-label" %>
-              <%= f.telephone_field :phone, class: "form-control", placeholder: "Phone Number", required: true %>
+            <div class="row">
+              <!-- Qualification Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :qualification, "Qualification", class: "form-label fw-bold" %>
+                <%= f.text_field :qualification, class: "form-control", placeholder: "e.g., M.D., Pharm.D.", required: false %>
+              </div>
+
+              <!-- Years of Experience Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :years_of_experience, "Years of Experience", class: "form-label fw-bold" %>
+                <%= f.number_field :years_of_experience, class: "form-control", placeholder: "Enter experience years", min: 0, required: false %>
+              </div>
             </div>
 
-            <!-- Qualification Field -->
+            <!-- Profile Photo Upload -->
             <div class="mb-3">
-              <%= f.label :qualification, class: "form-label" %>
-              <%= f.text_field :qualification, class: "form-control", placeholder: "Qualification (e.g., M.D., Pharm.D.)", required: false %>
+              <%= f.label :photo, "Profile Photo", class: "form-label fw-bold" %>
+              <%= f.file_field :photo, class: "form-control", accept: "image/*" %>
+              <% if @staff.photo.attached? %>
+                <div class="mt-2">
+                  <strong>Current Photo:</strong>
+                  <br>
+                  <img src="<%= url_for(@staff.photo) %>" alt="Profile Photo" class="img-thumbnail" width="100">
+                </div>
+              <% end %>
             </div>
 
-            <!-- Years of Experience Field -->
-            <div class="mb-3">
-              <%= f.label :years_of_experience, class: "form-label" %>
-              <%= f.number_field :years_of_experience, class: "form-control", placeholder: "Years of Experience", min: 0, required: false %>
+            <div class="row">
+              <!-- Password Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :password, "Password", class: "form-label fw-bold" %>
+                <%= f.password_field :password, class: "form-control", placeholder: "Enter password (optional)", required: false %>
+              </div>
+
+              <!-- Password Confirmation Field -->
+              <div class="col-md-6 mb-3">
+                <%= f.label :password_confirmation, "Confirm Password", class: "form-label fw-bold" %>
+                <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Re-enter password", required: false %>
+              </div>
             </div>
 
-            <!-- Photo URL Field -->
-            <div class="mb-3">
-              <%= f.label :photo_url, class: "form-label" %>
-              <%= f.text_field :photo_url, class: "form-control", placeholder: "Profile Photo URL", required: false %>
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <%= f.submit @staff.new_record? ? "Create Staff" : "Update Staff", class: "btn btn-primary btn-lg" %>
             </div>
 
-            <!-- Password Field -->
-            <div class="mb-3">
-              <%= f.label :password, class: "form-label" %>
-              <%= f.password_field :password, class: "form-control", placeholder: "Password (Leave blank to keep current)", required: false %>
-            </div>
-
-            <!-- Password Confirmation Field -->
-            <div class="mb-3">
-              <%= f.label :password_confirmation, class: "form-label" %>
-              <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirm Password", required: false %>
-            </div>
-
-            <!-- Staff Role Field -->
-            <div class="mb-3">
-              <%= f.label :staff_role, class: "form-label" %>
-              <%= f.select :staff_role, 
-                    options_for_select(
-                      User.staff_roles.keys.map { |role| [role.humanize, role] },
-                      @staff.staff_role
-                    ), 
-                    { prompt: "Select a role" }, 
-                    class: "form-select", 
-                    required: true %>
-            </div>
-
-            <%= f.submit @staff.new_record? ? "Create Staff" : "Update Staff", class: "btn btn-primary w-100" %>
           <% end %>
         </div>
       </div>

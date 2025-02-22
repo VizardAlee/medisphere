@@ -55,6 +55,14 @@ class Patient < ApplicationRecord
   # ----------------------------------------------------------------------------
   before_validation :set_username_and_password, on: :create
 
+  def display_photo
+    if photo.attached?
+      photo.variant(resize_to_fill: [200, 200])
+    else
+      "default_avatar.png"
+    end
+  end
+
   private
 
   def set_username_and_password

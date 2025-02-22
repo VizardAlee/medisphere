@@ -1,18 +1,23 @@
 class HealthRecordsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user_or_patient!
   before_action :set_health_record, only: %i[show edit update destroy]
   before_action :authorize_health_record, only: %i[create update destroy]
 
   def index
-    @records = if current_user.admin? || current_user.staff?
-                 policy_scope(HealthRecord).includes(:patient).where(patients: { organization_id: current_user.organization_id })
-               elsif current_user.patient?
-                 policy_scope(HealthRecord).where(patient_id: current_user.id)
-               else
-                 HealthRecord.none
-               end
+    if current_user # Admin or Staff
+      if current_user.admin? || current_user.staff?
+        @records = policy_scope(HealthRecord)
+                     .includes(:patient)
+                     .where(patients: { organization_id: current_user.organization_id })
+      end
+    elsif current_patient # Patient
+      @records = policy_scope(HealthRecord).where(patient_id: current_patient.id)
+    else
+      @records = HealthRecord.none
+    end
+  
     authorize HealthRecord
-  end
+  end  
 
   def show
     # Ensure that @record is not nil before proceeding

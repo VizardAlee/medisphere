@@ -1,97 +1,135 @@
-<div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-      <h3 class="mb-0">Patient Details</h3>
-        <% if user_signed_in? && (current_user&.admin? || current_user&.staff?) %>
-        <div>
-          <%= link_to 'Edit', edit_patient_path(@patient), class: 'btn btn-light btn-sm' %>
-          <%= link_to 'Back', patients_path, class: 'btn btn-light btn-sm' %>
+<div class="container py-4">
+  <!-- Back Button -->
+  <% if user_signed_in? %>
+    <div class="mb-3">
+      <%= link_to '<i class="fas fa-arrow-left"></i> Back to Patients'.html_safe, patients_path, class: 'btn btn-outline-secondary' %>
+    </div>
+  <% end %>
+  <div class="row">
+    <!-- Patient Profile Section -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+          <!-- Patient Photo -->
+          <% if @patient.photo.attached? %>
+            <%= image_tag @patient.photo.variant(resize_to_fill: [200, 200]), class: "img-thumbnail rounded-circle mb-3" %>
+          <% else %>
+            <%= image_tag "default_avatar.png", class: "img-thumbnail rounded-circle", size: "200x200" %>
+          <% end %>
+
+          <h4 class="text-primary"><%= @patient.name %></h4>
+          <p class="text-muted"><%= @patient.gender.capitalize %>, <%= @patient.age %> years</p>
+
+          <!-- Edit & Back Buttons -->
+          <% if user_signed_in? && (current_user.admin? || current_user.staff?) %>
+            <a href="<%= edit_patient_path(@patient) %>" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-edit"></i> Edit
+            </a>
+          <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
 
-    <div class="card-body">
-
-      <!-- Display Patient Photo -->
-      <% if @patient.photo.attached? %>
-        <div class="text-center mb-4">
-          <%= image_tag @patient.photo.variant(resize_to_fill: [200, 200]), class: "img-thumbnail rounded-circle" %>
+    <!-- Patient Details Section -->
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Patient Details</h5>
         </div>
-      <% else %>
-        <div class="text-center mb-4">
-          <p class="text-muted">No photo uploaded.</p>
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item"><strong>Email:</strong> <%= @patient.email.presence || 'N/A' %></li>
+            <li class="list-group-item"><strong>Phone:</strong> <%= @patient.phone.presence || 'N/A' %></li>
+            <li class="list-group-item"><strong>Address:</strong> <%= @patient.address.presence || 'N/A' %></li>
+            <li class="list-group-item"><strong>Blood Type:</strong> <%= @patient.blood_type.presence || 'N/A' %></li>
+            <li class="list-group-item"><strong>Organ Donor:</strong> <%= @patient.organ_donor_status ? 'Yes' : 'No' %></li>
+          </ul>
         </div>
-      <% end %>
+      </div>
 
-      <!-- Basic Information -->
-      <h5 class="text-secondary">Basic Information</h5>
-      <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Name:</strong> <%= @patient.name %></li>
-        <li class="list-group-item"><strong>Email:</strong> <%= @patient.email.presence || 'N/A' %></li>
-        <li class="list-group-item"><strong>Phone:</strong> <%= @patient.phone %></li>
-        <li class="list-group-item"><strong>Age:</strong> <%= @patient.age %></li>
-        <li class="list-group-item"><strong>Gender:</strong> <%= @patient.gender.capitalize %></li>
-      </ul>
+      <!-- Medical Information Accordion -->
+      <div class="accordion mt-3" id="medicalInfoAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#medicalInfo" aria-expanded="true">
+              Medical Information
+            </button>
+          </h2>
+          <div id="medicalInfo" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+              <ul class="list-group">
+                <li class="list-group-item"><strong>Allergies:</strong> <%= @patient.allergies.presence || 'None' %></li>
+                <li class="list-group-item"><strong>Chronic Conditions:</strong> <%= @patient.chronic_conditions.presence || 'None' %></li>
+                <li class="list-group-item"><strong>Current Medications:</strong> <%= @patient.current_medications.presence || 'None' %></li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-      <!-- Medical Information -->
-      <h5 class="text-secondary">Medical Information</h5>
-      <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Blood Type:</strong> <%= @patient.blood_type.presence || 'N/A' %></li>
-        <li class="list-group-item"><strong>Allergies:</strong> <%= @patient.allergies.presence || 'None' %></li>
-        <li class="list-group-item"><strong>Chronic Conditions:</strong> <%= @patient.chronic_conditions.presence || 'None' %></li>
-        <li class="list-group-item"><strong>Current Medications:</strong> <%= @patient.current_medications.presence || 'None' %></li>
-      </ul>
-
-      <!-- Emergency Contact -->
-      <h5 class="text-secondary">Emergency Contact</h5>
-      <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Contact Name:</strong> <%= @patient.emergency_contact_name.presence || 'N/A' %></li>
-        <li class="list-group-item"><strong>Relationship:</strong> <%= @patient.emergency_contact_relationship.presence || 'N/A' %></li>
-        <li class="list-group-item"><strong>Phone:</strong> <%= @patient.emergency_contact_phone.presence || 'N/A' %></li>
-      </ul>
-
-      <!-- Administrative Details -->
-      <h5 class="text-secondary">Administrative Details</h5>
-      <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Address:</strong> <%= @patient.address.presence || 'N/A' %></li>
-        <li class="list-group-item"><strong>Organ Donor:</strong> <%= @patient.organ_donor_status ? 'Yes' : 'No' %></li>
-      </ul>
+        <!-- Emergency Contact -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emergencyInfo">
+              Emergency Contact
+            </button>
+          </h2>
+          <div id="emergencyInfo" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <ul class="list-group">
+                <li class="list-group-item"><strong>Name:</strong> <%= @patient.emergency_contact_name.presence || 'N/A' %></li>
+                <li class="list-group-item"><strong>Relationship:</strong> <%= @patient.emergency_contact_relationship.presence || 'N/A' %></li>
+                <li class="list-group-item"><strong>Phone:</strong> <%= @patient.emergency_contact_phone.presence || 'N/A' %></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Health Records Section -->
       <% if current_user&.admin? || current_user&.staff? || current_patient&.id %>
-        <h5 class="text-secondary">Health Records</h5>
-        <% if @health_records.any? %>
-          <table class="table table-striped mt-3">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Diagnosis</th>
-                <th>Prescription</th>
-                <th>Updated By</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @health_records.each do |record| %>
-                <tr>
-                  <td><%= record.created_at.strftime('%B %d, %Y') %></td>
-                  <td><%= record.diagnosis %></td>
-                  <td><%= record.prescription %></td>
-                  <td>
-                    <% staff_member = User.find_by(id: record.updated_by) %>
-                    <%= staff_member ? "#{staff_member.name} (#{staff_member.staff_role})" : "Unknown" %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        <% else %>
-          <p>No health records found for this patient.</p>
-        <% end %>
-      <% end %>
-
-      <% if current_patient&.id %>
-        <div class="mt-4">
-          <%= link_to 'Back to Dashboard', dashboard_path, class: 'btn btn-secondary' %>
+        <div class="card shadow-sm border-0 mt-4">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Health Records</h5>
+            <% if current_user&.staff? || current_user&.admin? %>
+              <%= link_to '+ Add Record', new_health_record_path(patient_id: @patient.id), class: 'btn btn-sm btn-light' %>
+            <% end %>
+          </div>
+          <div class="card-body">
+            <% if @health_records.any? %>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Prescription</th>
+                    <th>Updated By</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @health_records.each do |record| %>
+                    <tr>
+                      <td><%= record.created_at.strftime('%B %d, %Y') %></td>
+                      <td><%= record.diagnosis.truncate(40) %></td>
+                      <td><%= record.prescription.truncate(40) %></td>
+                      <td>
+                        <% staff_member = User.find_by(id: record.updated_by) %>
+                        <%= staff_member ? "#{staff_member.name} (#{staff_member.staff_role})" : "Unknown" %>
+                      </td>
+                      <td>
+                        <a href="<%= patient_health_record_path(@patient, record) %>" class="btn btn-sm btn-outline-info">View</a>
+                        <% if current_user&.staff? || current_user&.admin? %>
+                          <a href="<%= edit_health_record_path(record) %>" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <p class="text-muted">No health records found for this patient.</p>
+            <% end %>
+          </div>
         </div>
       <% end %>
 

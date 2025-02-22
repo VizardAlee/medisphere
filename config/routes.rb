@@ -14,11 +14,12 @@ Rails.application.routes.draw do
 
   resources :staffs
 
+  resources :users, only: [:show]
 
   resources :organizations
 
   resources :patients, only: [:new, :create, :index, :show, :edit, :update] do
-    resources :health_records, only: %i[new create show edit update destroy]
+    resources :health_records, only: %i[index show]
   end
 
   resources :health_records, only: [:new, :create, :index, :show, :edit, :update, :destroy]

@@ -70,3 +70,5 @@ gem "pundit"
 gem "letter_opener", group: :development
 
 gem "bcrypt", "~> 3.1.7"
+
+gem "image_processing", "~> 1.2"

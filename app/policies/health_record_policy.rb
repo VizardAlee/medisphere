@@ -1,34 +1,52 @@
 class HealthRecordPolicy < ApplicationPolicy
   def index?
-    user.admin? || user.staff? || user.patient? || user.emergency_respondent?
+    return true if user_is_admin_or_staff? || user_is_patient? || user_is_emergency_respondent?
   end
+  
 
   def show?
-    return true if user.admin? || user.staff? || user.emergency_respondent?
-    user.patient? && record.patient_id == user.id
+    return true if user_is_admin_or_staff? || user_is_emergency_respondent?
+    user_is_patient? && record.patient_id == user.id
   end
 
   def create?
-    user.admin? || user.staff?
+    user_is_admin_or_staff?
   end
 
   def update?
-    user.admin? || user.staff? && record.patient.organization_id == user.organization_id
+    user_is_admin_or_staff? && record.patient.organization_id == user.organization_id
   end
 
   def destroy?
-    user.admin? && record.patient.organization_id == user.organization_id
+    user_is_admin? && record.patient.organization_id == user.organization_id
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.admin? || user.staff? || user.emergency_respondent?
+      return scope.none if user.nil?  
+
+      if user_is_admin_or_staff? || user_is_emergency_respondent?
         scope.all
-      elsif user.patient?
+      elsif user_is_patient?
         scope.where(patient_id: user.id)
       else
         scope.none
       end
     end
+  end  
+
+  private
+
+  def user_is_admin_or_staff?
+    user.respond_to?(:admin?) && (user.admin? || user.staff?)
   end
+
+  def user_is_emergency_respondent?
+    user.respond_to?(:emergency_respondent?) && user.emergency_respondent?
+  end
+
+  def user_is_patient?
+    user.is_a?(Patient) # Ensures we're dealing with a patient object
+  end
+  
 end
