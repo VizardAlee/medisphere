@@ -16,8 +16,20 @@ class HealthRecordsController < ApplicationController
       @records = HealthRecord.none
     end
   
+    # Apply search filter
+    if params[:search].present?
+      @records = @records.joins(:patient)
+                         .where("patients.name ILIKE :query OR diagnosis ILIKE :query", query: "%#{params[:search]}%")
+    end
+  
     authorize HealthRecord
-  end  
+  
+    respond_to do |format|
+      format.html
+      format.turbo_stream { render partial: "health_records_list", locals: { records: @records } }
+    end
+  end
+  
 
   def show
     # Ensure that @record is not nil before proceeding
