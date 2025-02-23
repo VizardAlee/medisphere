@@ -1,13 +1,12 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
   validates :password, confirmation: true, allow_blank: true
   before_validation :set_default_role, on: :create
   before_validation :downcase_email
-  enum :role, { admin: 0, staff: 1, patient: 2, visitor: 3 }
+
+  enum :role, { admin: 0, staff: 1, patient: 2, visitor: 3, emergency_admin: 4, super_admin: 5 }
   validates :role, presence: true
 
   has_one_attached :photo
@@ -15,18 +14,24 @@ class User < ApplicationRecord
 
   # Enum for staff roles
   scope :staff, -> { where(role: :staff) }
+  enum :staff_role, { doctor: 0, pharmacist: 1, nurse: 2, clerk: 3, emergency_respondent: 4 }, prefix: :staff
 
-  enum :staff_role, { doctor: 0, pharmacist: 1, nurse: 2, clerk: 3 }, prefix: :staff
+  validates :staff_role, presence: true, if: :staff?
 
-  # Staff roles (only relevant for users with role: :staff)
-  validates :staff_role, presence: true, if: :staff? # Require staff_role for staff users
+  scope :emergency_staff, -> { where(staff_role: :emergency_respondent) }
 
-  # Add validation for uniqueness of email across all users, excluding the current user
   validates :email, presence: true, uniqueness: { case_sensitive: false }
-
   validates :phone, presence: true, uniqueness: true
+
   belongs_to :organization, optional: true
   has_many :health_records, dependent: :destroy
+
+  # Emergency Respondent Verification
+  scope :verified_emergency_respondents, -> { where(role: :emergency_respondent, verified: true) }
+
+  def can_access_emergency_records?
+    emergency_respondent? && verified?
+  end
 
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
@@ -45,11 +50,14 @@ class User < ApplicationRecord
     end
   end
 
+  def super_admin?
+    role == "super_admin"
+  end
+
   private
 
   def set_default_role
-    self.role ||= "admin"
-    Rails.logger.info("Default role set to #{self.role}") if self.role_was.nil?
+    self.role ||= "visitor" # Prevents auto-assignment of emergency_respondent
   end
 
   def downcase_email

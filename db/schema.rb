@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_08_200841) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_23_205505) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_200841) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "emergency_access_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "patient_id", null: false
+    t.datetime "accessed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_emergency_access_logs_on_patient_id"
+    t.index ["user_id"], name: "index_emergency_access_logs_on_user_id"
+  end
+
   create_table "health_records", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.text "diagnosis"
@@ -68,6 +78,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_200841) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "organization_type", default: "hospital"
+    t.boolean "emergency_type", default: false
+    t.bigint "parent_id"
+    t.string "status", default: "pending"
+    t.string "appeal_status"
+    t.text "appeal_reason"
+    t.index ["parent_id"], name: "index_organizations_on_parent_id"
   end
 
   create_table "patients", force: :cascade do |t|
@@ -102,11 +118,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_200841) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.string "national_identity_number"
+    t.string "voter_id"
     t.index ["email"], name: "index_patients_on_email", unique: true
     t.index ["hospital_id"], name: "index_patients_on_hospital_id"
+    t.index ["national_identity_number"], name: "index_patients_on_national_identity_number", unique: true
     t.index ["organization_id"], name: "index_patients_on_organization_id"
     t.index ["phone"], name: "index_patients_on_phone", unique: true
     t.index ["reset_password_token"], name: "index_patients_on_reset_password_token", unique: true
+    t.index ["voter_id"], name: "index_patients_on_voter_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -125,17 +145,33 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_200841) do
     t.string "qualification"
     t.integer "years_of_experience"
     t.string "photo_url"
+    t.boolean "verified", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["phone"], name: "index_users_on_phone", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "verification_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "respondent_id", null: false
+    t.datetime "verified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["respondent_id"], name: "index_verification_logs_on_respondent_id"
+    t.index ["user_id"], name: "index_verification_logs_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "emergency_access_logs", "patients"
+  add_foreign_key "emergency_access_logs", "users"
   add_foreign_key "health_records", "patients"
   add_foreign_key "health_records", "users"
+  add_foreign_key "organizations", "organizations", column: "parent_id"
   add_foreign_key "patients", "hospitals"
   add_foreign_key "patients", "organizations"
   add_foreign_key "users", "organizations"
+  add_foreign_key "verification_logs", "users"
+  add_foreign_key "verification_logs", "users", column: "respondent_id"
 end

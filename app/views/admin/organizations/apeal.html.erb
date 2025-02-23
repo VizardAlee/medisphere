@@ -1,0 +1,13 @@
+<h2>Appeal Rejection</h2>
+
+<% if @organization.appeal_status == "pending" %>
+  <p class="alert alert-info">Your appeal is under review.</p>
+<% else %>
+  <%= form_with model: @organization, url: appeal_admin_organization_path, method: :patch do |f| %>
+    <div class="mb-3">
+      <%= f.label :appeal_reason, "Why should we reconsider?" %>
+      <%= f.text_area :appeal_reason, class: "form-control", rows: 5 %>
+    </div>
+    <%= f.submit "Submit Appeal", class: "btn btn-warning" %>
+  <% end %>
+<% end %>

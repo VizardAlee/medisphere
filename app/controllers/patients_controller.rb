@@ -89,7 +89,8 @@ class PatientsController < ApplicationController
       :immunization_records, :family_medical_history,
       :emergency_contact_name, :emergency_contact_relationship, :emergency_contact_phone,
       :insurance_provider, :insurance_policy_number, :organ_donor_status,
-      :address, :photo, :last_visit_date, :registration_date
+      :address, :photo, :last_visit_date, :registration_date, :national_identity_number,
+      :voter_id
     )
   end
 

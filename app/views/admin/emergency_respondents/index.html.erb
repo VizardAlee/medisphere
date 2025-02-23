@@ -1,0 +1,19 @@
+<h3>Verification Logs</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Admin</th>
+      <th>Emergency Responder</th>
+      <th>Verified At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% VerificationLog.all.each do |log| %>
+      <tr>
+        <td><%= log.admin.name %></td>
+        <td><%= log.respondent.name %></td>
+        <td><%= log.verified_at.strftime("%d %b %Y, %H:%M") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

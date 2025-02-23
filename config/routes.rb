@@ -41,6 +41,22 @@ Rails.application.routes.draw do
     root to: "home#index"
   end
 
+  resources :emergency_records, only: [:show] do
+    collection do
+      get :search
+    end
+  end
+
+  resources :emergency_respondents, only: [:new, :create] do
+    get 'register/:token', to: 'emergency_respondents#new', as: :register
+  end  
+
+  namespace :admin do
+    get "emergency_respondents/index"
+    get "emergency_respondents/update"
+    resources :emergency_respondents, only: [:index, :update]
+  end
+  
   get "up" => "rails/health#show", as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

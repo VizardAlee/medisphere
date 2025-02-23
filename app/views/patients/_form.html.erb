@@ -34,6 +34,19 @@
       <%= form.file_field :photo, class: "form-control" %>
     </div>
 
+    <!-- Government Identification -->
+    <h5 class="text-secondary mt-4 mb-3">Government Identification</h5>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :national_identity_number, "National Identity Number (NIN)", class: "form-label" %>
+        <%= form.text_field :national_identity_number, class: "form-control", placeholder: "Enter NIN (optional)" %>
+      </div>
+      <div class="col-md-6 mb-3">
+        <%= form.label :voter_id, "Voter ID", class: "form-label" %>
+        <%= form.text_field :voter_id, class: "form-control", placeholder: "Enter Voter ID (optional)" %>
+      </div>
+    </div>
+
     <!-- Medical Information -->
     <h5 class="text-secondary mt-4 mb-3">Medical Information</h5>
     <div class="row">

@@ -49,6 +49,29 @@
     </div>
   </div>
 
+  <!-- Emergency Responders Section -->
+  <% if @emergency_organizations.any? %>
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <h3 class="fw-bold text-danger text-center">Emergency Responders</h3>
+        <p class="text-muted text-center">Verified emergency organizations that can access critical patient records in emergencies.</p>
+      </div>
+
+      <% @emergency_organizations.each do |organization| %>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h5 class="card-title text-danger fw-bold"><%= organization.name %></h5>
+              <p class="card-text text-muted"><%= organization.address %></p>
+              <p class="card-text"><strong>Contact:</strong> <%= organization.phone %></p>
+              <%= link_to "Learn More", organization_path(organization), class: "btn btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <!-- Future Feature Teaser -->
   <div class="row mt-5">
     <div class="col-md-8 offset-md-2 text-center">

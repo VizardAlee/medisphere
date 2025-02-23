@@ -1,0 +1,2 @@
+module EmergencyAccessHelper
+end

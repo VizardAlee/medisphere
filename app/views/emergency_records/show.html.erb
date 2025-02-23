@@ -1,0 +1,10 @@
+<h2>Emergency Patient Information</h2>
+
+<p><strong>Full Name:</strong> <%= @patient.name %></p>
+<p><strong>Blood Type:</strong> <%= @patient.blood_type %></p>
+<p><strong>Allergies:</strong> <%= @patient.allergies.presence || "None" %></p>
+<p><strong>Chronic Conditions:</strong> <%= @patient.chronic_conditions.presence || "None" %></p>
+
+<p class="text-danger"><strong>Access Logged at:</strong> <%= Time.current.strftime("%d %B %Y, %H:%M") %></p>
+
+<%= link_to "Back to Search", search_emergency_records_path, class: "btn btn-secondary" %>

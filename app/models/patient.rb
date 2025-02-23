@@ -40,6 +40,8 @@ class Patient < ApplicationRecord
   # ----------------------------------------------------------------------------
   validates :phone, presence: true, uniqueness: true
   validates :name,  presence: true
+  validates :national_identity_number, uniqueness: true, allow_blank: true
+  validates :voter_id, uniqueness: true, allow_blank: true
   # email is optional now, but you can keep it if staff want to store it.
   # validates :email, uniqueness: true, allow_blank: true
 

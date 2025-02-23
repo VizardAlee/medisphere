@@ -1,0 +1,47 @@
+<h2>Pending Emergency Responder Divisions</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Contact</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @organizations.each do |org| %>
+      <tr>
+        <td><%= org.name %></td>
+        <td><%= org.phone %></td>
+        <td>
+          <%= link_to "Approve", approve_admin_organization_path(org), method: :patch, class: "btn btn-success" %>
+          <%= link_to "Reject", reject_admin_organization_path(org), method: :patch, class: "btn btn-danger" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h3>Appeals</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Division</th>
+      <th>Appeal Reason</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Organization.where(appeal_status: "pending").each do |org| %>
+      <tr>
+        <td><%= org.name %></td>
+        <td><%= org.appeal_reason %></td>
+        <td>
+          <%= link_to "Approve Appeal", approve_admin_organization_path(org), method: :patch, class: "btn btn-success" %>
+          <%= link_to "Reject Appeal", reject_admin_organization_path(org), method: :patch, class: "btn btn-danger" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
