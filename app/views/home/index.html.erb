@@ -2,88 +2,63 @@
   <!-- Hero Section -->
   <div class="row justify-content-center text-center">
     <div class="col-md-10">
-      <h1 class="fw-bold text-primary">Welcome to MediSphere</h1>
+      <h1 class="fw-bold text-primary">Your Health Records, Anytime, Anywhere</h1>
       <p class="lead text-muted">
-        The modern solution for seamless and secure health record management.
+        MediSphere helps patients access their medical records, hospitals manage patient data, 
+        and emergency responders get vital health information when every second counts.
       </p>
-      <div class="mt-4">
-        <% if current_user.nil? %>
-          <a href="<%= new_user_registration_path %>" class="btn btn-primary btn-lg">Get Started</a>
-          <%= link_to "User Login", new_session_path(:user), class: "btn btn-outline-primary btn-lg ms-2" %>
-          <%= link_to "Patient Login", new_session_path(:patient), class: "btn btn-outline-secondary btn-lg ms-2" %>
-        <% end %>
+
+      <% if current_user.nil? %>
+        <div class="mt-4 d-flex justify-content-center gap-3">
+          <a href="<%= new_user_registration_path %>" class="btn btn-primary btn-lg">Sign Up</a>
+          <%= link_to "User Login", new_session_path(:user), class: "btn btn-outline-primary btn-lg" %>
+          <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-lg btn-warning text-dark fw-bold px-4" %>
+        </div>
+        <p class="mt-2 text-muted">
+          Not sure if your data is on MediSphere? Enter your phone number and find out.
+        </p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Feature Section -->
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title text-success fw-bold">For Patients</h5>
+          <p class="card-text text-muted">
+            Access your medical history, prescriptions, and diagnoses in one place. 
+            No more missing records—just log in with your phone number.
+          </p>
+          <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-warning text-dark fw-bold" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title text-primary fw-bold">For Hospitals & Pharmacies</h5>
+          <p class="card-text text-muted">
+            Securely manage patient records, update diagnoses, and provide seamless healthcare services.
+          </p>
+          <%= link_to "Join MediSphere", new_user_registration_path, class: "btn btn-primary" %>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Role-Based Dashboard -->
+  <!-- Future Feature Teaser -->
   <div class="row mt-5">
-    <% if current_user&.admin? %>
-      <!-- Admin Section -->
-      <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title text-primary fw-bold">Manage Hospitals & Pharmacies</h5>
-            <p class="card-text text-muted">Efficiently add and manage hospitals and pharmacies.</p>
-            <a href="<%= hospitals_path %>" class="btn btn-primary">Manage Hospitals</a>
-            <a href="<%= pharmacies_path %>" class="btn btn-secondary">Manage Pharmacies</a>
-          </div>
-        </div>
+    <div class="col-md-8 offset-md-2 text-center">
+      <div class="p-4 bg-light rounded shadow-sm">
+        <h4 class="fw-bold text-dark">Coming Soon: Symptom-Based Doctor Matching</h4>
+        <p class="text-muted">
+          Not sure what’s wrong? Share your symptoms and get connected with doctors who specialize in your condition.
+        </p>
+        <button class="btn btn-outline-secondary disabled">Stay Tuned</button>
       </div>
-    <% end %>
-
-    <% if current_user&.staff? %>
-      <!-- Staff Section -->
-      <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title text-success fw-bold">Update Health Records</h5>
-            <p class="card-text text-muted">Easily add or update patient diagnoses and prescriptions.</p>
-            <a href="<%= health_records_path %>" class="btn btn-success">View Health Records</a>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <% if current_user&.patient? %>
-      <!-- Patient Section -->
-      <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title text-info fw-bold">Your Health Records</h5>
-            <p class="card-text text-muted">Access and download your health records anytime.</p>
-            <a href="<%= health_records_path(patient_id: current_user.id) %>" class="btn btn-info">View My Records</a>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <% if current_user&.emergency_respondent? %>
-      <!-- Emergency Respondent Section -->
-      <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title text-danger fw-bold">Emergency Access</h5>
-            <p class="card-text text-muted">Quickly retrieve emergency patient records.</p>
-            <a href="<%= emergency_records_path %>" class="btn btn-danger">Access Emergency Records</a>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <% if current_user.nil? %>
-      <!-- Visitor Section -->
-      <div class="col-md-6 offset-md-3">
-        <div class="card shadow-sm border-0">
-          <div class="card-body text-center">
-            <h5 class="card-title text-dark fw-bold">Join MediSphere Today</h5>
-            <p class="card-text text-muted">Sign up or log in to unlock the full features.</p>
-            <a href="<%= new_user_registration_path %>" class="btn btn-primary">Sign Up</a>
-            <%= link_to "User Login", new_session_path(:user), class: "btn btn-outline-primary ms-2" %>
-            <%= link_to "Patient Login", new_session_path(:patient), class: "btn btn-outline-secondary ms-2" %>
-          </div>
-        </div>
-      </div>
-    <% end %>
+    </div>
   </div>
 </div>
