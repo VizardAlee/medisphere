@@ -9,23 +9,39 @@
       </p>
 
       <% if current_user.nil? %>
-        <div class="mt-4 d-flex justify-content-center gap-3">
-          <a href="<%= new_user_registration_path %>" class="btn btn-primary btn-lg">Sign Up</a>
+        <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
           <%= link_to "User Login", new_session_path(:user), class: "btn btn-outline-primary btn-lg" %>
           <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-lg btn-warning text-dark fw-bold px-4" %>
         </div>
         <p class="mt-2 text-muted">
           Not sure if your data is on MediSphere? Enter your phone number and find out.
         </p>
+      <% else %>
+        <!-- Display Approval Status for Signed-In Users -->
+        <div class="mt-4">
+          <% if current_user.organization %>
+            <p class="text-muted">
+              Your organization: <strong><%= current_user.organization.name %></strong><br>
+              Status: 
+              <% if current_user.organization.approved %>
+                <span class="badge bg-success">Approved</span>
+              <% else %>
+                <span class="badge bg-warning">Pending Approval</span>
+                <small class="d-block mt-1">Awaiting super admin approval.</small>
+              <% end %>
+            </p>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>
 
-  <!-- Feature Section -->
+  <!-- Feature Sections -->
   <div class="row mt-5">
-    <div class="col-md-6">
+    <!-- For Patients -->
+    <div class="col-md-4">
       <div class="card shadow-sm border-0">
-        <div class="card-body">
+        <div class="card-body text-center">
           <h5 class="card-title text-success fw-bold">For Patients</h5>
           <p class="card-text text-muted">
             Access your medical history, prescriptions, and diagnoses in one place. 
@@ -36,9 +52,10 @@
       </div>
     </div>
 
-    <div class="col-md-6">
+    <!-- For Hospitals & Pharmacies -->
+    <div class="col-md-4">
       <div class="card shadow-sm border-0">
-        <div class="card-body">
+        <div class="card-body text-center">
           <h5 class="card-title text-primary fw-bold">For Hospitals & Pharmacies</h5>
           <p class="card-text text-muted">
             Securely manage patient records, update diagnoses, and provide seamless healthcare services.
@@ -47,30 +64,30 @@
         </div>
       </div>
     </div>
+
+    <!-- For Emergency Responders -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+          <h5 class="card-title text-danger fw-bold">For Emergency Responders</h5>
+          <p class="card-text text-muted">
+            Register your division to gain secure access to emergency patient data when needed.
+          </p>
+          <% if current_user && current_user.organization&.approved %>
+            <%= link_to "Create Emergency Respondents", new_emergency_respondent_path, class: "btn btn-danger" %>
+          <% elsif current_user %>
+            <button class="btn btn-danger disabled" title="Pending organization approval">Create Emergency Respondents</button>
+            <small class="d-block mt-2 text-muted">Available once approved by a super admin.</small>
+          <% else %>
+            <%= link_to "Register Your Division", new_user_registration_path, class: "btn btn-danger" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Emergency Responders Section -->
-  <% if @emergency_organizations.any? %>
-    <div class="row mt-5">
-      <div class="col-md-12">
-        <h3 class="fw-bold text-danger text-center">Emergency Responders</h3>
-        <p class="text-muted text-center">Verified emergency organizations that can access critical patient records in emergencies.</p>
-      </div>
-
-      <% @emergency_organizations.each do |organization| %>
-        <div class="col-md-4">
-          <div class="card shadow-sm border-0">
-            <div class="card-body">
-              <h5 class="card-title text-danger fw-bold"><%= organization.name %></h5>
-              <p class="card-text text-muted"><%= organization.address %></p>
-              <p class="card-text"><strong>Contact:</strong> <%= organization.phone %></p>
-              <%= link_to "Learn More", organization_path(organization), class: "btn btn-outline-danger" %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+  <!-- Emergency Responders Section (Only if organizations exist) -->
+  <%= render "home/emergency_respondents" %>
 
   <!-- Future Feature Teaser -->
   <div class="row mt-5">

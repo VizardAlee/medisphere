@@ -1,0 +1,92 @@
+<div class="container mt-5">
+  <h3 class="fw-bold text-danger text-center">Your Emergency Response Organization</h3>
+  
+  <% if @emergency_organizations.any? %>
+    <div class="row mb-4">
+      <% @emergency_organizations.each do |organization| %>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 <%= organization.approved ? '' : 'border-warning bg-light' %>">
+            <div class="card-body">
+              <h5 class="card-title text-danger fw-bold"><%= organization.name %></h5>
+              <p class="card-text text-muted"><%= organization.address %></p>
+              <p class="card-text"><strong>Contact:</strong> <%= organization.phone %></p>
+              <p class="card-text">
+                <strong>Approval Status:</strong> 
+                <% if organization.approved %>
+                  <span class="badge bg-success">Approved</span>
+                <% else %>
+                  <span class="badge bg-danger">Not Approved</span>
+                  <small class="d-block mt-1 text-danger fw-bold">This organization is not yet approved by a super admin.</small>
+                <% end %>
+              </p>
+              <%= link_to "View Details", organization_path(organization), class: "btn btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if current_user&.admin? %>
+      <% organization = @emergency_organizations.first %>
+      <% if organization.approved %>
+        <!-- Admin Section for Managing Emergency Respondents -->
+        <div class="card shadow-sm border-0 mt-4">
+          <div class="card-body">
+            <h5 class="card-title text-danger fw-bold">Manage Emergency Respondents</h5>
+            <%= link_to "Add New Respondent", new_emergency_respondent_path, class: "btn btn-danger mb-3" %>
+            
+            <% if @respondents.any? %>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @respondents.each do |respondent| %>
+                    <tr>
+                      <td><%= respondent.name %></td>
+                      <td><%= respondent.phone %></td>
+                      <td>
+                        <% if respondent.verified %>
+                          <span class="badge bg-success">Verified</span>
+                        <% else %>
+                          <span class="badge bg-warning">Pending</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <%# Edit/Delete actions require route expansion %>
+                        <span class="text-muted">Awaiting verification</span>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <p class="text-muted">No emergency respondent staff added yet.</p>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <!-- Prominent Unapproved Notice -->
+        <div class="alert alert-warning text-center mt-4" role="alert">
+          <h4 class="alert-heading fw-bold text-danger">Organization Not Approved</h4>
+          <p class="mb-0">
+            Your organization, <strong><%= organization.name %></strong>, is not yet approved by a super admin. 
+            You cannot manage emergency respondents until approval is granted.
+          </p>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-danger mb-3 disabled" title="Organization must be approved to add respondents">
+            Add New Respondent
+          </button>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p class="text-center text-muted">You are not part of any emergency response organization.</p>
+  <% end %>
+</div>

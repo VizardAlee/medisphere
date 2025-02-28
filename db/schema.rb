@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_23_205505) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_26_200639) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,6 +83,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_23_205505) do
     t.string "status", default: "pending"
     t.string "appeal_status"
     t.text "appeal_reason"
+    t.boolean "approved"
+    t.string "state"
+    t.string "emergency_organization_type"
     t.index ["parent_id"], name: "index_organizations_on_parent_id"
   end
 
@@ -146,6 +149,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_23_205505) do
     t.integer "years_of_experience"
     t.string "photo_url"
     t.boolean "verified", default: false
+    t.string "state"
+    t.string "emergency_organization_type"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["phone"], name: "index_users_on_phone", unique: true

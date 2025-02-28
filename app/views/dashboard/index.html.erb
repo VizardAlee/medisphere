@@ -1,5 +1,6 @@
 <div class="container py-5">
   <%= render "admin_dashboard" if current_user.admin? %>
+  <%= render "emergency_dashboard" if current_user.super_admin? && current_user.organization&.organization_type == "emergency" %>
   <%= render "staff_dashboard" if current_user.staff? %>
   <%= render "patient_dashboard" if current_user.patient? %>
   <%= render "visitor_dashboard" if current_user.role == 'visitor' %>

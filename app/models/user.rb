@@ -54,6 +54,12 @@ class User < ApplicationRecord
     role == "super_admin"
   end
 
+  validates :state, presence: true, if: :super_admin?
+  validates :emergency_organization_type, presence: true, if: :super_admin?
+
+  # Ensure super admins are unique per state and organization
+  validates :state, uniqueness: { scope: :emergency_organization_type, message: "already has a super admin for this organization" }, if: :super_admin?
+
   private
 
   def set_default_role

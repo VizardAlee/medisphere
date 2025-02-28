@@ -17,14 +17,14 @@
             <!-- Email Field -->
             <div class="form-group mb-3">
               <%= f.label :email, "Email Address", class: "form-label" %>
-              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
+              <%= f.email_field :email, autocomplete: "email", class: "form-control" %>
             </div>
 
+            <!-- Phone Field -->
             <div class="form-group mb-3">
               <%= f.label :phone, "Phone Number", class: "form-label" %>
               <%= f.telephone_field :phone, autocomplete: "tel", class: "form-control", required: true %>
             </div>
-
 
             <!-- Password Field -->
             <div class="form-group mb-3">
@@ -39,19 +39,44 @@
             </div>
 
             <!-- Organization Name Field -->
-            <div class="form-group mb-4">
+            <div class="form-group mb-3">
               <%= f.label :organization_name, "Organization Name", class: "form-label" %>
-              <%= text_field_tag :organization_name, nil, placeholder: "Enter your organization name", class: "form-control" %>
+              <%= text_field_tag :organization_name, nil, placeholder: "e.g., Malali Division", class: "form-control", required: true %>
+              <small class="form-text text-muted">For emergency divisions, enter the division name.</small>
             </div>
 
-             <div class="form-group mb-3">
+            <!-- Organization Address Field -->
+            <div class="form-group mb-3">
               <%= label_tag :organization_address, "Organization Address", class: "form-label" %>
               <%= text_field_tag :organization_address, nil, class: "form-control", required: true %>
             </div>
 
+            <!-- Organization Phone Field -->
             <div class="form-group mb-3">
               <%= label_tag :organization_phone, "Organization Phone", class: "form-label" %>
               <%= text_field_tag :organization_phone, nil, class: "form-control", required: true %>
+            </div>
+
+            <!-- Organization Type Field -->
+            <div class="form-group mb-3">
+              <%= label_tag :organization_type, "Organization Type", class: "form-label" %>
+              <%= select_tag :organization_type, options_for_select([["Hospital", "hospital"], ["Pharmacy", "pharmacy"], ["Emergency", "emergency"]], "hospital"), class: "form-select", id: "organization_type" %>
+            </div>
+
+            <!-- Emergency Fields (Hidden by Default) -->
+            <div id="emergency_fields" style="display: none;">
+              <!-- State Selection -->
+              <div class="form-group mb-3">
+                <%= label_tag :state, "State", class: "form-label" %>
+                <%= select_tag :state, options_for_select(@states || states), class: "form-select", prompt: "Select a state", required: true %>
+              </div>
+
+              <!-- Emergency Organization Type -->
+              <div class="form-group mb-3">
+                <%= label_tag :emergency_organization_type, "Emergency Organization Type", class: "form-label" %>
+                <%= select_tag :emergency_organization_type, options_for_select([["Police", "Police"], ["Fire Service", "Fire Service"], ["Road Safety", "Road Safety"]]), class: "form-select", prompt: "Select emergency type", required: true %>
+                <small class="form-text text-muted">Choose the type of emergency organization this division belongs to.</small>
+              </div>
             </div>
 
             <!-- Submit Button -->
@@ -64,3 +89,10 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('organization_type').addEventListener('change', function() {
+    var emergencyFields = document.getElementById('emergency_fields');
+    emergencyFields.style.display = this.value === 'emergency' ? 'block' : 'none';
+  });
+</script>

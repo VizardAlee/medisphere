@@ -1,19 +1,63 @@
-<h3>Verification Logs</h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Admin</th>
-      <th>Emergency Responder</th>
-      <th>Verified At</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% VerificationLog.all.each do |log| %>
-      <tr>
-        <td><%= log.admin.name %></td>
-        <td><%= log.respondent.name %></td>
-        <td><%= log.verified_at.strftime("%d %b %Y, %H:%M") %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="container mt-5">
+  <h3 class="fw-bold text-primary text-center">Manage Emergency Respondents</h3>
+
+  <h4 class="fw-bold mt-4 text-warning">Pending Verification Requests</h4>
+
+  <% if @pending_users.any? %>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-warning">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @pending_users.each do |user| %>
+            <tr>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td><%= user.phone %></td>
+              <td>
+                <%= link_to "Verify", verify_admin_emergency_respondent_path(user), method: :patch, class: "btn btn-sm btn-success" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-muted">No pending verification requests.</p>
+  <% end %>
+
+  <h4 class="fw-bold mt-4 text-success">Verified Emergency Respondents</h4>
+
+  <% if @respondents.any? %>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-success">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @respondents.each do |user| %>
+            <% if user.verified? %>
+              <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.phone %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-muted">No verified emergency respondents yet.</p>
+  <% end %>
+</div>

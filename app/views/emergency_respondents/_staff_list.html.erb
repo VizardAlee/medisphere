@@ -1,0 +1,28 @@
+<% if @emergency_organizations.any? %>
+  <% staff_members = User.where(organization_id: @emergency_organizations.first.id, role: "staff") %>
+  <% if staff_members.any? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% staff_members.each do |staff| %>
+          <tr>
+            <td><%= staff.name %></td>
+            <td><%= staff.phone %></td>
+            <td>
+              <%= link_to "Edit", edit_emergency_respondent_path(staff), class: "btn btn-sm btn-outline-primary" %>
+              <%= link_to "Delete", emergency_respondent_path(staff), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted">No emergency respondent staff added yet.</p>
+  <% end %>
+<% end %>

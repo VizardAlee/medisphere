@@ -1,0 +1,20 @@
+<div class="container mt-5">
+  <h2 class="text-primary"><%= @organization.name %></h2>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <p><strong>Address:</strong> <%= @organization.address %></p>
+      <p><strong>Phone:</strong> <%= @organization.phone %></p>
+      <p><strong>Type:</strong> <%= @organization.organization_type %></p>
+      <p><strong>Emergency Type:</strong> <%= @organization.emergency_organization_type || "N/A" %></p>
+      <p><strong>State:</strong> <%= @organization.state || "Not specified" %></p>
+      <p><strong>Approval Status:</strong> 
+        <% if @organization.approved %>
+          <span class="badge bg-success">Approved</span>
+        <% else %>
+          <span class="badge bg-danger">Not Approved</span>
+        <% end %>
+      </p>
+      <%= link_to "Back to Dashboard", root_path, class: "btn btn-secondary mt-3" %>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :check_admin_profile, if: -> { current_user&.admin? && current_user.organization.nil? }
   before_action :authenticate_patient!, if: :patient_controller?
+  before_action :authenticate_user_or_patient!,
+  unless: -> { devise_controller? || (controller_name == "home" && action_name == "index" && request.get?) }
 
   def user_role
     current_user&.role || "visitor"
@@ -21,6 +23,8 @@ class ApplicationController < ActionController::Base
     case resource
     when User
       case resource.role
+      when 'super_admin'
+        root_path
       when 'admin'
         resource.organization.nil? ? new_organization_path : root_path
       when 'staff'
@@ -33,6 +37,10 @@ class ApplicationController < ActionController::Base
     else
       root_path
     end
+  end
+
+  def after_sign_out_path_for(resource_or_scope)
+    root_path
   end
 
   def current_organization
@@ -48,6 +56,15 @@ class ApplicationController < ActionController::Base
   def authenticate_user_or_patient!
     unless current_user || current_patient
       redirect_to new_user_session_path, alert: "You need to sign in first."
+    end
+  end
+
+  def authorize_super_admin!
+    unless current_user&.super_admin? &&
+          current_user.state == @organization.state &&
+          current_user.emergency_organization_type == @organization.emergency_organization_type
+      flash[:alert] = "Access denied. You can only manage organizations in your state and department."
+      redirect_to root_path
     end
   end
 
@@ -84,6 +101,5 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[role organization_id phone])
     devise_parameter_sanitizer.permit(:sign_in, keys: %i[login password])
 
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[phone email password password_confirmation])
-  end
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :phone, :organization_name, :organization_address, :organization_phone, :organization_type, :state, :emergency_division])  end
 end

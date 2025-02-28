@@ -1,6 +1,7 @@
 class SharedSessionsController < ApplicationController
   # Skip authentication since this is the login action
   skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user_or_patient!, only: [:new, :create, :destroy]
 
   def new
     # Render a shared login form (see below)
@@ -30,8 +31,7 @@ class SharedSessionsController < ApplicationController
   end
 
   def destroy
-    # You might want to sign out both scopes if needed:
-    sign_out(current_user || current_patient)
-    redirect_to root_path, notice: "Logged out."
+    reset_session # Ensure full logout
+    redirect_to root_path, notice: "You have successfully signed out."
   end
 end

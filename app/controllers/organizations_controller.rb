@@ -1,9 +1,9 @@
 class OrganizationsController < ApplicationController
 before_action :authenticate_user!
-before_action :ensure_admin
+before_action :ensure_admin_or_super_admin, only: :show
 
   def new
-    @organization
+    @organization = Organization.new
   end
 
   def create
@@ -18,10 +18,20 @@ before_action :ensure_admin
     end
   end
 
+  def show
+    @organization = Organization.find(params[:id])
+  end
+
   private
 
   def organization_params
-    params.require(:organization).permit(:name, :address, :phone)
+    params.require(:organization).permit(:name, :address, :phone, :organization_type)
+  end
+
+  def ensure_admin_or_super_admin
+    unless current_user.admin? || current_user.super_admin?
+      redirect_to root_path, alert: "Access denied. Only admins or super admins can view organization details."
+    end
   end
 
   def ensure_admin

@@ -1,0 +1,40 @@
+<div class="container mt-5">
+  <h3 class="fw-bold text-danger text-center">Your Emergency Response Organization</h3>
+
+  <div class="card shadow-sm border-0 mt-3">
+    <div class="card-body">
+      <h5 class="card-title text-danger fw-bold"><%= current_user.organization.name %></h5>
+      <p class="card-text"><strong>Address:</strong> <%= current_user.organization.address %></p>
+      <p class="card-text"><strong>Contact:</strong> <%= current_user.organization.phone %></p>
+    </div>
+  </div>
+
+  <h4 class="fw-bold mt-4">Verified Respondents in Your Division</h4>
+
+  <% if @respondents.any? %>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @respondents.each do |respondent| %>
+            <% if respondent.verified? %>
+              <tr>
+                <td><%= respondent.name %></td>
+                <td><%= respondent.email %></td>
+                <td><%= respondent.phone %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-muted">No verified emergency respondents yet.</p>
+  <% end %>
+</div>

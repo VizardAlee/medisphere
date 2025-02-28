@@ -1,0 +1,22 @@
+<h2>Pending Emergency Organizations</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>State</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @organizations.each do |organization| %>
+      <tr>
+        <td><%= organization.name %></td>
+        <td><%= organization.state %></td>
+        <td>
+          <%= button_to "Approve", admin_emergency_organization_path(organization, approved: true), method: :patch, class: "btn btn-success" %>
+          <%= button_to "Reject", admin_emergency_organization_path(organization, approved: false), method: :patch, class: "btn btn-danger", data: { confirm: "Are you sure?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

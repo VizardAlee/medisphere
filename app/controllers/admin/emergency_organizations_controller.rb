@@ -1,9 +1,11 @@
-class Admin::OrganizationsController < ApplicationController
+class Admin::EmergencyOrganizationsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_super_admin
 
   def index
-    @organizations = Organization.where(status: "pending")
+    @all_emergency_organizations = Organization.where(
+      organization_type: "emergency"
+    ).where("approved IS NULL OR approved = ?", false)
   end
 
   def approve
@@ -14,9 +16,9 @@ class Admin::OrganizationsController < ApplicationController
     else
       flash[:alert] = "Failed to approve organization."
     end
-    redirect_to admin_organizations_path
+    redirect_to root_path
   end
-  
+
   def reject
     @organization = Organization.find(params[:id])
     if @organization.update(approved: false, status: "rejected")
@@ -25,27 +27,26 @@ class Admin::OrganizationsController < ApplicationController
     else
       flash[:alert] = "Failed to reject organization."
     end
-    redirect_to admin_organizations_path
+    redirect_to root_path
   end
 
-  def appeal
-    @organization = current_user.organization
-  
-    if request.patch?
-      if @organization.update(appeal_status: "pending", appeal_reason: params[:organization][:appeal_reason])
-        flash[:notice] = "Your appeal has been submitted."
-        redirect_to root_path
-      else
-        flash[:alert] = "Failed to submit appeal."
-      end
+  def update
+    @organization = Organization.find(params[:id])
+    if params[:approved] == "true"
+      @organization.update(approved: true)
+      flash[:notice] = "Emergency organization approved successfully."
+    else
+      @organization.destroy
+      flash[:alert] = "Emergency organization rejected."
     end
+    redirect_to admin_emergency_organizations_path
   end
-  
-  
 
   private
 
   def authorize_super_admin
-    redirect_to root_path, alert: "Unauthorized access" unless current_user.super_admin?
+    unless current_user.super_admin?
+      redirect_to root_path, alert: "You are not authorized to perform this action."
+    end
   end
 end

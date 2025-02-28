@@ -1,0 +1,68 @@
+<!-- Pending Organizations -->
+<div class="card shadow-sm">
+  <div class="card-header bg-danger text-white">
+    <h4>Pending Organizations</h4>
+  </div>
+  <div class="card-body">
+    <% if @organizations.any? %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>State</th>
+            <th>Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @organizations.each do |organization| %>
+            <tr>
+              <td><%= organization.name %></td>
+              <td><%= organization.state %></td>
+              <td><%= organization.emergency_organization_type %></td>
+              <td>
+                <%= link_to "Approve", approve_admin_emergency_organization_path(organization), method: :patch, class: "btn btn-success btn-sm" %>
+                <%= link_to "Reject", reject_admin_emergency_organization_path(organization), method: :patch, class: "btn btn-danger btn-sm" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No pending organizations.</p>
+    <% end %>
+  </div>
+</div>
+
+<!-- Pending Respondents -->
+<div class="card shadow-sm mt-4">
+  <div class="card-header bg-warning text-white">
+    <h4>Pending Respondents</h4>
+  </div>
+  <div class="card-body">
+    <% if @pending_respondents.any? %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Organization</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @pending_respondents.each do |respondent| %>
+            <tr>
+              <td><%= respondent.name %></td>
+              <td><%= respondent.organization.name %></td>
+              <td>
+                <%= link_to "Verify", verify_admin_emergency_respondent_path(respondent), method: :patch, class: "btn btn-success btn-sm" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No pending respondents.</p>
+    <% end %>
+  </div>
+</div>

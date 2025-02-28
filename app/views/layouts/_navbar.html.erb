@@ -22,20 +22,37 @@
         </li>
 
         <% if user_signed_in? %>
+          <!-- Admin -->
           <% if current_user.admin? %>
             <li class="nav-item">
               <a class="nav-link" href="<%= staffs_path %>">Manage Staff</a>
             </li>
-          <% elsif current_user.staff? %>
+            <% if current_user.organization.organization_type == "emergency_respondent" %>
+              <li class="nav-item">
+                <a class="nav-link" href="<%= admin_emergency_respondents_path %>">Manage Emergency Respondents</a>
+              </li>
+            <% end %>
+
+          <!-- Emergency Respondent -->
+          <% elsif current_user.respond_to?(:emergency_respondent?) && current_user.emergency_respondent? %>
+            <li class="nav-item">
+              <a class="nav-link" href="<%= emergency_records_path %>">Emergency Records</a>
+            </li>
+          <% end %>
+
+          <!-- Staff -->
+          <% if current_user.staff? %>
             <li class="nav-item">
               <a class="nav-link" href="<%= patients_path %>">Patients</a>
             </li>
           <% end %>
+
         <% elsif patient_signed_in? %>
           <li class="nav-item">
             <a class="nav-link" href="<%= patient_health_records_path(current_patient) %>">My Health Records</a>
           </li>
         <% else %>
+          <!-- Public / Unauthenticated -->
           <li class="nav-item">
             <a class="nav-link" href="<%= new_user_registration_path %>">Sign Up (Staff)</a>
           </li>
@@ -60,7 +77,7 @@
                 <%= link_to "View Profile", staff_path(current_user), class: "dropdown-item" %>
               </li>
               <li>
-                <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+                <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "dropdown-item", data: { turbo_method: :delete } %>
               </li>
             </ul>
           </li>
@@ -75,7 +92,7 @@
                 <%= link_to "View Profile", patient_path(current_patient), class: "dropdown-item" %>
               </li>
               <li>
-                <%= button_to "Logout", destroy_patient_session_path, method: :delete, class: "dropdown-item" %>
+                <%= link_to "Logout", destroy_patient_session_path, method: :delete, class: "dropdown-item", data: { turbo_method: :delete } %>
               </li>
             </ul>
           </li>

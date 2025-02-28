@@ -1,22 +1,44 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
-emergency_organizations = [
-  { name: "Police", organization_type: "emergency", phone: "1234567890", address: "Police HQ" },
-  { name: "Federal Road Safety Commission", organization_type: "emergency", phone: "0987654321", address: "FRSC HQ" },
-  { name: "Fire Service", organization_type: "emergency", phone: "1122334455", address: "Fire HQ" }
+# db/seeds.rb
+
+states = [
+  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+  "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe",
+  "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
+  "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
+  "Sokoto", "Taraba", "Yobe", "Zamfara"
 ]
 
-emergency_organizations.each do |org|
-  Organization.find_or_create_by(name: org[:name]) do |o|
-    o.organization_type = org[:organization_type]
-    o.phone = org[:phone]
-    o.address = org[:address]
+emergency_organizations = ["Police", "Road Safety", "Fire Service"]
+
+# Ensure an emergency organization exists
+# Ensure an emergency organization exists with required fields
+emergency_org = Organization.find_or_create_by!(
+  name: "Emergency Response",
+  organization_type: "emergency",
+  address: "No. 1 Emergency Street, Abuja",
+  phone: "08000000000"
+)
+
+states.each do |state|
+  emergency_organizations.each do |org|
+    user_email = "#{org.downcase.gsub(' ', '_')}_admin_#{state.downcase.gsub(' ', '_')}@medisphere.com"
+
+    user = User.where(email: user_email).first_or_initialize
+
+    user.phone ||= "080#{rand(1_000_000..9_999_999)}"
+    user.role  = :super_admin
+    user.state = state
+    user.emergency_organization_type = org
+    user.organization_id = emergency_org.id # Assign the emergency organization
+    user.password = "123456"
+    user.password_confirmation = "123456"
+
+    user.save!
   end
 end
+
+puts "Super Admins seeded successfully!"
+
+
+
+puts "✅ Super Admins seeded successfully!"
