@@ -1,84 +1,84 @@
-<div class="container py-4">
+<!-- app/views/patients/show.html.erb -->
+<div class="container py-5">
   <!-- Back Button -->
   <% if user_signed_in? %>
-    <div class="mb-3">
-      <%= link_to '<i class="fas fa-arrow-left"></i> Back to Patients'.html_safe, patients_path, class: 'btn btn-outline-secondary' %>
+    <div class="mb-4 animate__animated animate__fadeInLeft">
+      <%= link_to '<i class="bi bi-arrow-left me-2"></i>Back to Patients'.html_safe, patients_path, class: "btn btn-outline-secondary btn-lg shadow-sm", data: { turbo: false } %>
     </div>
   <% end %>
-  <div class="row">
+
+  <div class="row g-4">
     <!-- Patient Profile Section -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
+    <div class="col-md-4 animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden h-100">
+        <div class="card-body text-center p-5 bg-gradient-light">
           <!-- Patient Photo -->
           <% if @patient.photo.attached? %>
-            <%= image_tag @patient.photo.variant(resize_to_fill: [200, 200]), class: "img-thumbnail rounded-circle mb-3" %>
+            <%= image_tag @patient.photo.variant(resize_to_fill: [250, 250]), class: "img-fluid rounded-circle shadow-lg mb-4 border border-primary-subtle", style: "max-width: 250px; height: 250px; object-fit: cover;" %>
           <% else %>
-            <%= image_tag "default_avatar.png", class: "img-thumbnail rounded-circle", size: "200x200" %>
+            <%= image_tag "default_avatar.png", class: "img-fluid rounded-circle shadow-lg mb-4 border border-muted", alt: "Default Avatar", style: "max-width: 250px; height: 250px; object-fit: cover;" %>
           <% end %>
-
-          <h4 class="text-primary"><%= @patient.name %></h4>
-          <p class="text-muted"><%= @patient.gender.capitalize %>, <%= @patient.age %> years</p>
-
-          <!-- Edit & Back Buttons -->
+          <h4 class="text-primary fw-bold mb-2"><%= @patient.name %></h4>
+          <p class="text-muted mb-4"><%= @patient.gender.capitalize %>, <%= @patient.age %> years</p>
           <% if user_signed_in? && (current_user.admin? || current_user.staff?) %>
-            <a href="<%= edit_patient_path(@patient) %>" class="btn btn-sm btn-outline-primary">
-              <i class="fas fa-edit"></i> Edit
-            </a>
+            <%= link_to edit_patient_path(@patient), class: "btn btn-outline-primary btn-lg shadow-sm", data: { turbo: false } do %>
+              <i class="bi bi-pencil me-2"></i>Edit Profile
+            <% end %>
           <% end %>
         </div>
       </div>
     </div>
 
     <!-- Patient Details Section -->
-    <div class="col-md-8">
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-success text-white">
-          <h5 class="mb-0">Patient Details</h5>
+    <div class="col-md-8 animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">
+      <!-- Patient Details Card -->
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-gradient-success text-white py-3">
+          <h5 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill me-2"></i>Patient Details</h5>
         </div>
-        <div class="card-body">
-          <ul class="list-group">
-            <li class="list-group-item"><strong>Email:</strong> <%= @patient.email.presence || 'N/A' %></li>
-            <li class="list-group-item"><strong>Phone:</strong> <%= @patient.phone.presence || 'N/A' %></li>
-            <li class="list-group-item"><strong>Address:</strong> <%= @patient.address.presence || 'N/A' %></li>
-            <li class="list-group-item"><strong>Blood Type:</strong> <%= @patient.blood_type.presence || 'N/A' %></li>
-            <li class="list-group-item"><strong>Organ Donor:</strong> <%= @patient.organ_donor_status ? 'Yes' : 'No' %></li>
+        <div class="card-body p-4 bg-light">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-envelope me-2"></i>Email:</strong> <span class="ms-2"><%= @patient.email.presence || 'N/A' %></span></li>
+            <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-telephone me-2"></i>Phone:</strong> <span class="ms-2"><%= @patient.phone.presence || 'N/A' %></span></li>
+            <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-house me-2"></i>Address:</strong> <span class="ms-2"><%= @patient.address.presence || 'N/A' %></span></li>
+            <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-droplet me-2"></i>Blood Type:</strong> <span class="ms-2"><%= @patient.blood_type.presence || 'N/A' %></span></li>
+            <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-heart me-2"></i>Organ Donor:</strong> <span class="ms-2"><%= @patient.organ_donor_status ? 'Yes' : 'No' %></span></li>
           </ul>
         </div>
       </div>
 
       <!-- Medical Information Accordion -->
-      <div class="accordion mt-3" id="medicalInfoAccordion">
-        <div class="accordion-item">
+      <div class="accordion mt-4" id="medicalInfoAccordion">
+        <div class="accordion-item shadow-sm border-0 rounded-3 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
           <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#medicalInfo" aria-expanded="true">
-              Medical Information
+            <button class="accordion-button bg-gradient-light fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#medicalInfo" aria-expanded="true">
+              <i class="bi bi-heart-pulse-fill me-2"></i>Medical Information
             </button>
           </h2>
           <div id="medicalInfo" class="accordion-collapse collapse show">
-            <div class="accordion-body">
-              <ul class="list-group">
-                <li class="list-group-item"><strong>Allergies:</strong> <%= @patient.allergies.presence || 'None' %></li>
-                <li class="list-group-item"><strong>Chronic Conditions:</strong> <%= @patient.chronic_conditions.presence || 'None' %></li>
-                <li class="list-group-item"><strong>Current Medications:</strong> <%= @patient.current_medications.presence || 'None' %></li>
+            <div class="accordion-body p-4">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-exclamation-circle me-2"></i>Allergies:</strong> <span class="ms-2"><%= @patient.allergies.presence || 'None' %></span></li>
+                <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-clipboard-pulse me-2"></i>Chronic Conditions:</strong> <span class="ms-2"><%= @patient.chronic_conditions.presence || 'None' %></span></li>
+                <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-capsule me-2"></i>Current Medications:</strong> <span class="ms-2"><%= @patient.current_medications.presence || 'None' %></span></li>
               </ul>
             </div>
           </div>
         </div>
 
         <!-- Emergency Contact -->
-        <div class="accordion-item">
+        <div class="accordion-item shadow-sm border-0 rounded-3 mt-3 animate__animated animate__fadeInUp" style="animation-delay: 0.8s;">
           <h2 class="accordion-header" id="headingTwo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emergencyInfo">
-              Emergency Contact
+            <button class="accordion-button collapsed bg-gradient-light fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#emergencyInfo">
+              <i class="bi bi-telephone-fill me-2"></i>Emergency Contact
             </button>
           </h2>
           <div id="emergencyInfo" class="accordion-collapse collapse">
-            <div class="accordion-body">
-              <ul class="list-group">
-                <li class="list-group-item"><strong>Name:</strong> <%= @patient.emergency_contact_name.presence || 'N/A' %></li>
-                <li class="list-group-item"><strong>Relationship:</strong> <%= @patient.emergency_contact_relationship.presence || 'N/A' %></li>
-                <li class="list-group-item"><strong>Phone:</strong> <%= @patient.emergency_contact_phone.presence || 'N/A' %></li>
+            <div class="accordion-body p-4">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-person me-2"></i>Name:</strong> <span class="ms-2"><%= @patient.emergency_contact_name.presence || 'N/A' %></span></li>
+                <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-link-45deg me-2"></i>Relationship:</strong> <span class="ms-2"><%= @patient.emergency_contact_relationship.presence || 'N/A' %></span></li>
+                <li class="list-group-item py-3"><strong class="text-muted"><i class="bi bi-telephone me-2"></i>Phone:</strong> <span class="ms-2"><%= @patient.emergency_contact_phone.presence || 'N/A' %></span></li>
               </ul>
             </div>
           </div>
@@ -87,52 +87,89 @@
 
       <!-- Health Records Section -->
       <% if current_user&.admin? || current_user&.staff? || current_patient&.id %>
-        <div class="card shadow-sm border-0 mt-4">
-          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Health Records</h5>
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden mt-4 animate__animated animate__fadeInUp" style="animation-delay: 1s;">
+          <div class="card-header bg-gradient-primary text-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-medical me-2"></i>Health Records</h5>
             <% if current_user&.staff? || current_user&.admin? %>
-              <%= link_to '+ Add Record', new_health_record_path(patient_id: @patient.id), class: 'btn btn-sm btn-light' %>
+              <%= link_to new_health_record_path(patient_id: @patient.id), class: "btn btn-outline-light btn-lg shadow-sm", data: { turbo: false } do %>
+                <i class="bi bi-plus-circle me-2"></i>Add Record
+              <% end %>
             <% end %>
           </div>
-          <div class="card-body">
+          <div class="card-body p-5 bg-light">
             <% if @health_records.any? %>
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Diagnosis</th>
-                    <th>Prescription</th>
-                    <th>Updated By</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @health_records.each do |record| %>
+              <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+                  <thead class="table-dark bg-gradient-dark">
                     <tr>
-                      <td><%= record.created_at.strftime('%B %d, %Y') %></td>
-                      <td><%= record.diagnosis.truncate(40) %></td>
-                      <td><%= record.prescription.truncate(40) %></td>
-                      <td>
-                        <% staff_member = User.find_by(id: record.updated_by) %>
-                        <%= staff_member ? "#{staff_member.name} (#{staff_member.staff_role})" : "Unknown" %>
-                      </td>
-                      <td>
-                        <a href="<%= patient_health_record_path(@patient, record) %>" class="btn btn-sm btn-outline-info">View</a>
-                        <% if current_user&.staff? || current_user&.admin? %>
-                          <a href="<%= edit_health_record_path(record) %>" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <% end %>
-                      </td>
+                      <th scope="col" class="py-3 px-4">Date</th>
+                      <th scope="col" class="py-3 px-4">Diagnosis</th>
+                      <th scope="col" class="py-3 px-4">Prescription</th>
+                      <th scope="col" class="py-3 px-4">Updated By</th>
+                      <th scope="col" class="py-3 px-4">Actions</th>
                     </tr>
-                  <% end %>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    <% @health_records.each_with_index do |record, index| %>
+                      <tr class="animate__animated animate__fadeInUp" style="animation-delay: <%= (index * 0.1) %>s;">
+                        <td class="px-4"><%= record.created_at.strftime('%B %d, %Y') %></td>
+                        <td class="px-4"><%= record.diagnosis.truncate(40) %></td>
+                        <td class="px-4"><%= record.prescription.truncate(40) %></td>
+                        <td class="px-4">
+                          <% staff_member = User.find_by(id: record.updated_by) %>
+                          <%= staff_member ? "#{staff_member.name} (#{staff_member.staff_role&.humanize})" : "Unknown" %>
+                        </td>
+                        <td class="px-4">
+                          <div class="btn-group" role="group">
+                            <%= link_to patient_health_record_path(@patient, record), class: "btn btn-outline-info btn-sm shadow-sm", data: { turbo: false } do %>
+                              <i class="bi bi-eye"></i>
+                            <% end %>
+                            <% if current_user&.staff? || current_user&.admin? %>
+                              <%= link_to edit_health_record_path(record), class: "btn btn-outline-secondary btn-sm shadow-sm", data: { turbo: false } do %>
+                                <i class="bi bi-pencil"></i>
+                              <% end %>
+                            <% end %>
+                          </div>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
             <% else %>
-              <p class="text-muted">No health records found for this patient.</p>
+              <p class="text-muted text-center">No health records found for this patient.</p>
             <% end %>
           </div>
         </div>
       <% end %>
-
     </div>
   </div>
 </div>
+
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
+  .bg-gradient-success { background: linear-gradient(135deg, #28a745, #34c759); }
+  .bg-gradient-dark { background: linear-gradient(135deg, #343a40, #495057); }
+  .bg-gradient-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+  .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+  }
+  .btn { transition: all 0.3s ease; }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  }
+  .btn-outline-light, .btn-outline-primary, .btn-outline-secondary, .btn-outline-info { border-width: 2px; }
+  .accordion-button { transition: background-color 0.3s ease; }
+  .accordion-button:not(.collapsed) { background-color: #f8f9fa; color: #007bff; }
+  .accordion-button:focus { box-shadow: none; }
+  .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.1); transition: background-color 0.2s ease; }
+  .img-fluid.rounded-circle { border: 4px solid #e9ecef; transition: border-color 0.3s ease; }
+  .img-fluid.rounded-circle:hover { border-color: #007bff; }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

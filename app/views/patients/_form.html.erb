@@ -1,135 +1,240 @@
-<div class="card-body">
-  <%= form_with model: @patient, local: true, html: { multipart: true } do |form| %>
+<!-- app/views/patients/_form.html.erb -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-md-12">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn">
+        <!-- Header -->
+        <div class="card-header bg-gradient-primary text-white py-4 text-center">
+          <h3 class="mb-0 fw-bold">
+            <i class="bi bi-person-fill-add me-2"></i>
+            <%= @patient.new_record? ? "Register New Patient" : "Edit Patient Details" %>
+          </h3>
+          <p class="text-light mt-2 mb-0 small">
+            <%= @patient.new_record? ? "Add a new patient to MediSphere" : "Update patient information" %>
+          </p>
+        </div>
 
-    <!-- Basic Information -->
-    <h5 class="text-secondary mb-3">Basic Information</h5>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <%= form.label :name, "Full Name", class: "form-label" %>
-        <%= form.text_field :name, class: "form-control", required: true, placeholder: "Enter full name" %>
-      </div>
-      <div class="col-md-6 mb-3">
-        <%= form.label :phone, "Phone Number", class: "form-label" %>
-        <%= form.telephone_field :phone, class: "form-control", required: true, placeholder: "e.g. +234..." %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <%= form.label :email, "Email (optional)", class: "form-label" %>
-        <%= form.email_field :email, class: "form-control", placeholder: "example@mail.com" %>
-      </div>
-      <div class="col-md-3 mb-3">
-        <%= form.label :age, "Age", class: "form-label" %>
-        <%= form.number_field :age, class: "form-control", required: true, placeholder: "e.g. 25" %>
-      </div>
-      <div class="col-md-3 mb-3">
-        <%= form.label :gender, "Gender", class: "form-label" %>
-        <%= form.select :gender, ["Male", "Female", "Other"], {}, class: "form-select", required: true %>
-      </div>
-    </div>
+        <!-- Body -->
+        <div class="card-body p-5 bg-light">
+          <%= form_with model: @patient, local: true, multipart: true, class: "needs-validation", novalidate: true do |form| %>
+            <!-- Basic Information -->
+            <h5 class="text-primary fw-semibold mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.1s;">
+              <i class="bi bi-person-circle me-2"></i>Basic Information
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.2s;">
+                <%= form.label :name, "Full Name", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :name, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter full name", required: true %>
+                <div class="invalid-feedback">Please enter a name.</div>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.2s;">
+                <%= form.label :phone, "Phone Number", class: "form-label fw-semibold text-muted" %>
+                <%= form.telephone_field :phone, class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., +234...", required: true %>
+                <div class="invalid-feedback">Please enter a phone number.</div>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.3s;">
+                <%= form.label :email, "Email (optional)", class: "form-label fw-semibold text-muted" %>
+                <%= form.email_field :email, class: "form-control form-control-lg shadow-sm border-0", placeholder: "example@mail.com" %>
+              </div>
+              <div class="col-md-3 animate__animated animate__fadeInRight" style="animation-delay: 0.3s;">
+                <%= form.label :age, "Age", class: "form-label fw-semibold text-muted" %>
+                <%= form.number_field :age, class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., 25", required: true %>
+                <div class="invalid-feedback">Please enter an age.</div>
+              </div>
+              <div class="col-md-3 animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">
+                <%= form.label :gender, "Gender", class: "form-label fw-semibold text-muted" %>
+                <%= form.select :gender, ["Male", "Female", "Other"], { prompt: "Select gender" }, class: "form-select form-select-lg shadow-sm border-0", required: true %>
+                <div class="invalid-feedback">Please select a gender.</div>
+              </div>
+            </div>
 
-    <!-- Upload Photo (Active Storage) -->
-    <div class="mb-3">
-      <%= form.label :photo, "Upload Photo", class: "form-label" %>
-      <%= form.file_field :photo, class: "form-control" %>
-    </div>
+            <!-- Upload Photo -->
+            <div class="mt-5 mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.5s;">
+              <%= form.label :photo, "Profile Photo", class: "form-label fw-semibold text-muted" %>
+              <%= form.file_field :photo, class: "form-control form-control-lg shadow-sm border-0", accept: "image/*" %>
+              <% if @patient.photo.attached? %>
+                <div class="mt-3 text-center">
+                  <p class="text-muted small mb-1">Current Photo</p>
+                  <%= image_tag @patient.photo, class: "img-thumbnail rounded-circle shadow-sm", style: "max-width: 120px; height: 120px; object-fit: cover;" %>
+                </div>
+              <% end %>
+            </div>
 
-    <!-- Government Identification -->
-    <h5 class="text-secondary mt-4 mb-3">Government Identification</h5>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <%= form.label :national_identity_number, "National Identity Number (NIN)", class: "form-label" %>
-        <%= form.text_field :national_identity_number, class: "form-control", placeholder: "Enter NIN (optional)" %>
-      </div>
-      <div class="col-md-6 mb-3">
-        <%= form.label :voter_id, "Voter ID", class: "form-label" %>
-        <%= form.text_field :voter_id, class: "form-control", placeholder: "Enter Voter ID (optional)" %>
-      </div>
-    </div>
+            <!-- Government Identification -->
+            <h5 class="text-primary fw-semibold mt-5 mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.6s;">
+              <i class="bi bi-card-id me-2"></i>Government Identification
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.7s;">
+                <%= form.label :national_identity_number, "National Identity Number (NIN)", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :national_identity_number, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter NIN (optional)" %>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.7s;">
+                <%= form.label :voter_id, "Voter ID", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :voter_id, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter Voter ID (optional)" %>
+              </div>
+            </div>
 
-    <!-- Medical Information -->
-    <h5 class="text-secondary mt-4 mb-3">Medical Information</h5>
-    <div class="row">
-      <div class="col-md-4 mb-3">
-        <%= form.label :blood_type, "Blood Type", class: "form-label" %>
-        <%= form.select :blood_type, ['A+', 'B+', 'AB+', 'O+', 'A-', 'B-', 'AB-', 'O-'], { include_blank: 'Select blood type' }, class: "form-select" %>
-      </div>
-      <div class="col-md-8 mb-3">
-        <%= form.label :allergies, "Allergies", class: "form-label" %>
-        <%= form.text_area :allergies, class: "form-control", placeholder: "List any allergies" %>
-      </div>
-    </div>
-    <div class="mb-3">
-      <%= form.label :chronic_conditions, "Chronic Conditions", class: "form-label" %>
-      <%= form.text_area :chronic_conditions, class: "form-control", placeholder: "Specify chronic conditions, if any" %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :current_medications, "Current Medications", class: "form-label" %>
-      <%= form.text_area :current_medications, class: "form-control", placeholder: "List current medications" %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :immunization_records, "Immunization Records", class: "form-label" %>
-      <%= form.text_area :immunization_records, class: "form-control", placeholder: "Enter immunization history" %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :family_medical_history, "Family Medical History", class: "form-label" %>
-      <%= form.text_area :family_medical_history, class: "form-control", placeholder: "Enter family medical history" %>
-    </div>
+            <!-- Medical Information -->
+            <h5 class="text-primary fw-semibold mt-5 mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.8s;">
+              <i class="bi bi-heart-pulse-fill me-2"></i>Medical Information
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.9s;">
+                <%= form.label :blood_type, "Blood Type", class: "form-label fw-semibold text-muted" %>
+                <%= form.select :blood_type, ['A+', 'B+', 'AB+', 'O+', 'A-', 'B-', 'AB-', 'O-'], { include_blank: 'Select blood type' }, class: "form-select form-select-lg shadow-sm border-0" %>
+              </div>
+              <div class="col-md-8 animate__animated animate__fadeInRight" style="animation-delay: 0.9s;">
+                <%= form.label :allergies, "Allergies", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_area :allergies, class: "form-control shadow-sm border-0", rows: 3, placeholder: "List any allergies" %>
+              </div>
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 1s;">
+                <%= form.label :chronic_conditions, "Chronic Conditions", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_area :chronic_conditions, class: "form-control shadow-sm border-0", rows: 3, placeholder: "Specify chronic conditions, if any" %>
+              </div>
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 1.1s;">
+                <%= form.label :current_medications, "Current Medications", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_area :current_medications, class: "form-control shadow-sm border-0", rows: 3, placeholder: "List current medications" %>
+              </div>
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 1.2s;">
+                <%= form.label :immunization_records, "Immunization Records", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_area :immunization_records, class: "form-control shadow-sm border-0", rows: 3, placeholder: "Enter immunization history" %>
+              </div>
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 1.3s;">
+                <%= form.label :family_medical_history, "Family Medical History", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_area :family_medical_history, class: "form-control shadow-sm border-0", rows: 3, placeholder: "Enter family medical history" %>
+              </div>
+            </div>
 
-    <!-- Emergency Contact Information -->
-    <h5 class="text-secondary mt-4 mb-3">Emergency Contact Information</h5>
-    <div class="row">
-      <div class="col-md-4 mb-3">
-        <%= form.label :emergency_contact_name, "Contact Name", class: "form-label" %>
-        <%= form.text_field :emergency_contact_name, class: "form-control", placeholder: "Name of emergency contact" %>
-      </div>
-      <div class="col-md-4 mb-3">
-        <%= form.label :emergency_contact_relationship, "Relationship", class: "form-label" %>
-        <%= form.text_field :emergency_contact_relationship, class: "form-control", placeholder: "e.g. Parent, Sibling" %>
-      </div>
-      <div class="col-md-4 mb-3">
-        <%= form.label :emergency_contact_phone, "Phone", class: "form-label" %>
-        <%= form.telephone_field :emergency_contact_phone, class: "form-control", placeholder: "e.g. +234..." %>
-      </div>
-    </div>
+            <!-- Emergency Contact Information -->
+            <h5 class="text-primary fw-semibold mt-5 mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 1.4s;">
+              <i class="bi bi-telephone-fill me-2"></i>Emergency Contact Information
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-4 animate__animated animate__fadeInLeft" style="animation-delay: 1.5s;">
+                <%= form.label :emergency_contact_name, "Contact Name", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :emergency_contact_name, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Name of emergency contact" %>
+              </div>
+              <div class="col-md-4 animate__animated animate__fadeInUp" style="animation-delay: 1.5s;">
+                <%= form.label :emergency_contact_relationship, "Relationship", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :emergency_contact_relationship, class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., Parent, Sibling" %>
+              </div>
+              <div class="col-md-4 animate__animated animate__fadeInRight" style="animation-delay: 1.5s;">
+                <%= form.label :emergency_contact_phone, "Phone", class: "form-label fw-semibold text-muted" %>
+                <%= form.telephone_field :emergency_contact_phone, class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., +234..." %>
+              </div>
+            </div>
 
-    <!-- Insurance Information -->
-    <h5 class="text-secondary mt-4 mb-3">Insurance Information</h5>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <%= form.label :insurance_provider, "Insurance Provider", class: "form-label" %>
-        <%= form.text_field :insurance_provider, class: "form-control", placeholder: "Enter insurance provider" %>
-      </div>
-      <div class="col-md-6 mb-3">
-        <%= form.label :insurance_policy_number, "Policy Number", class: "form-label" %>
-        <%= form.text_field :insurance_policy_number, class: "form-control", placeholder: "Enter policy number" %>
-      </div>
-    </div>
+            <!-- Insurance Information -->
+            <h5 class="text-primary fw-semibold mt-5 mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 1.6s;">
+              <i class="bi bi-shield-check me-2"></i>Insurance Information
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 1.7s;">
+                <%= form.label :insurance_provider, "Insurance Provider", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :insurance_provider, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter insurance provider" %>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 1.7s;">
+                <%= form.label :insurance_policy_number, "Policy Number", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :insurance_policy_number, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter policy number" %>
+              </div>
+            </div>
 
-    <!-- Administrative Details -->
-    <h5 class="text-secondary mt-4 mb-3">Administrative Details</h5>
-    <div class="mb-3">
-      <%= form.label :address, "Address", class: "form-label" %>
-      <%= form.text_field :address, class: "form-control", placeholder: "e.g. 123 Main St, City" %>
-    </div>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <%= form.label :last_visit_date, "Last Visit Date", class: "form-label" %>
-        <%= form.date_field :last_visit_date, class: "form-control" %>
-      </div>
-      <div class="col-md-6 mb-3">
-        <%= form.label :registration_date, "Registration Date", class: "form-label" %>
-        <%= form.date_field :registration_date, class: "form-control" %>
-      </div>
-    </div>
-    <div class="form-check mb-4">
-      <%= form.check_box :organ_donor_status, { class: "form-check-input" }, true, false %>
-      <%= form.label :organ_donor_status, "Organ Donor?", class: "form-check-label" %>
-    </div>
+            <!-- Administrative Details -->
+            <h5 class="text-primary fw-semibold mt-5 mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 1.8s;">
+              <i class="bi bi-file-earmark-text me-2"></i>Administrative Details
+            </h5>
+            <div class="row g-4">
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 1.9s;">
+                <%= form.label :address, "Address", class: "form-label fw-semibold text-muted" %>
+                <%= form.text_field :address, class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., 123 Main St, City" %>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 2s;">
+                <%= form.label :last_visit_date, "Last Visit Date", class: "form-label fw-semibold text-muted" %>
+                <%= form.date_field :last_visit_date, class: "form-control form-control-lg shadow-sm border-0" %>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 2s;">
+                <%= form.label :registration_date, "Registration Date", class: "form-label fw-semibold text-muted" %>
+                <%= form.date_field :registration_date, class: "form-control form-control-lg shadow-sm border-0" %>
+              </div>
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 2.1s;">
+                <div class="form-check">
+                  <%= form.check_box :organ_donor_status, { class: "form-check-input shadow-sm" }, true, false %>
+                  <%= form.label :organ_donor_status, "Organ Donor?", class: "form-check-label fw-semibold text-muted" %>
+                </div>
+              </div>
+            </div>
 
-    <div class="d-grid">
-      <%= form.submit @patient.new_record? ? "Create Patient" : "Update Patient", class: "btn btn-primary btn-lg" %>
+            <!-- Submit Button -->
+            <div class="d-grid mt-5 animate__animated animate__fadeInUp" style="animation-delay: 2.2s;">
+              <%= form.submit @patient.new_record? ? "Create Patient" : "Update Patient", class: "btn btn-primary btn-lg shadow-sm fw-semibold" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-
-  <% end %>
+  </div>
 </div>
+
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+  .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+  }
+  .btn {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  }
+  .img-thumbnail.rounded-circle {
+    border: 3px solid #e9ecef;
+    transition: border-color 0.3s ease;
+  }
+  .img-thumbnail.rounded-circle:hover {
+    border-color: #007bff;
+  }
+  .form-label { font-size: 1.1rem; }
+  .form-control-lg, .form-select-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1.1rem;
+    border-radius: 0.5rem;
+  }
+  .form-check-input { width: 1.5em; height: 1.5em; }
+  .invalid-feedback { font-size: 0.9rem; }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+<!-- Bootstrap Client-Side Validation Script -->
+<script>
+  (function () {
+    'use strict';
+    window.addEventListener('load', function () {
+      var forms = document.getElementsByClassName('needs-validation');
+      Array.prototype.filter.call(forms, function (form) {
+        form.addEventListener('submit', function (event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+</script>

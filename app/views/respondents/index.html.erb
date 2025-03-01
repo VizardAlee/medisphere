@@ -1,0 +1,97 @@
+<!-- app/views/respondents/index.html.erb -->
+<div class="container py-5">
+  <!-- Search Section -->
+  <div class="mb-5 animate__animated animate__fadeInDown">
+    <h1 class="display-4 fw-bold text-primary mb-4">
+      <i class="bi bi-search me-2"></i>Emergency Respondent Search
+    </h1>
+    <%= form_with url: respondent_path, method: :get, local: true, class: "input-group" do |f| %>
+      <%= f.text_field :query, value: params[:query], class: "form-control form-control-lg shadow-sm border-0", placeholder: "Search by phone number..." %>
+      <%= f.submit "Search", class: "btn btn-primary btn-lg shadow-sm" %>
+    <% end %>
+  </div>
+
+  <!-- Patient Details Section -->
+  <% if @patient %>
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+      <div class="card-header bg-gradient-primary text-white py-3">
+        <h3 class="mb-0 fw-bold fs-4">
+          <i class="bi bi-person-circle me-2"></i>Patient Details
+        </h3>
+      </div>
+      <div class="card-body p-4 bg-light">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <p><strong>Name:</strong> <%= @patient.name %></p>
+            <p><strong>Phone:</strong> <%= @patient.phone %></p>
+            <p><strong>Emergency Contact:</strong> <%= @patient.emergency_contact_name.presence || "Not provided" %> <%= "(#{@patient.emergency_contact_phone})" if @patient.emergency_contact_phone.present? %></p>
+            <p><strong>Blood Type:</strong> <%= @patient.blood_type || "Not specified" %></p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Allergies:</strong> <%= @patient.allergies || "None listed" %></p>
+            <p><strong>Chronic Conditions:</strong> <%= @patient.chronic_conditions || "None listed" %></p>
+            <p><strong>Current Medications:</strong> <%= @patient.current_medications || "None listed" %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Latest Health Record Section -->
+    <% if @latest_health_record %>
+      <div class="card shadow-sm border-0 rounded-4 overflow-hidden mt-4 animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+        <div class="card-header bg-gradient-success text-white py-3">
+          <h3 class="mb-0 fw-bold fs-4">
+            <i class="bi bi-file-medical me-2"></i>Latest Health Record
+          </h3>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <p><strong>Diagnosis:</strong> <%= @latest_health_record.diagnosis || "Not specified" %></p>
+          <p><strong>Prescription:</strong> <%= @latest_health_record.prescription || "Not specified" %></p>
+          <p><strong>Updated By:</strong> <%= User.find_by(id: @latest_health_record.updated_by)&.name || "Unknown" %></p>
+          <p><strong>Updated At:</strong> <%= @latest_health_record.updated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+        </div>
+      </div>
+    <% else %>
+      <div class="alert alert-info text-center mt-4 shadow-sm rounded-3 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+        <i class="bi bi-info-circle me-2"></i>No health records found for this patient.
+      </div>
+    <% end %>
+  <% else %>
+    <div class="alert alert-warning text-center shadow-sm rounded-3 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>No patient found with phone number "<%= params[:query] %>".
+    </div>
+  <% end %>
+</div>
+
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
+  .bg-gradient-success { background: linear-gradient(135deg, #28a745, #34c759); }
+  .bg-gradient-dark { background: linear-gradient(135deg, #343a40, #495057); }
+  .bg-gradient-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+  .hover-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+  }
+  .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important;
+  }
+  .shadow-sm { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important; }
+  .btn { transition: all 0.3s ease; }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+  .btn-outline-light, .btn-outline-success, .btn-outline-danger { border-width: 2px; }
+  .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.1); transition: background-color 0.2s ease; }
+  .card-body i { font-size: 2.5rem; transition: transform 0.3s ease; }
+  .hover-card:hover .card-body i { transform: scale(1.1); }
+  .text-sm { font-size: 0.875rem; }
+  .form-control-lg { padding: 0.75rem 1.25rem; font-size: 1.1rem; border-radius: 0.5rem; }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

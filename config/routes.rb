@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root
     get "dashboard", to: "dashboard#index", as: :dashboard
+    get "/respondent", to: "respondents#index", as: :respondent # Add this line
   end
 
   devise_scope :patient do
@@ -43,7 +44,7 @@ Rails.application.routes.draw do
   end
 
   # Emergency Records
-  resources :emergency_records, only: [:show] do
+  resources :emergency_records, only: [:index, :show] do
     collection do
       get :search
     end
@@ -67,6 +68,10 @@ Rails.application.routes.draw do
   # Emergency Respondents (Individual)
   resources :emergency_respondents, only: [:index, :new, :create, :edit, :update, :destroy] do
     get 'register/:token', to: 'emergency_respondents#new', as: :register, on: :collection
+    member do
+      patch :approve
+      patch :reject
+    end
   end
 
   # Health Check & PWA

@@ -17,6 +17,10 @@ class EmergencyRecordsController < ApplicationController
     end
   end
 
+  def index
+    @emergency_records = EmergencyRecord.all # Adjust query as needed
+  end
+
   def show
     @patient = Patient.find(params[:id])
   end

@@ -68,7 +68,7 @@ class Patient < ApplicationRecord
   private
 
   def set_username_and_password
-    Rails.logger.info ">>> Running set_username_and_password callback <<<"
+    # Rails.logger.info ">>> Running set_username_and_password callback <<<"
 
     # Example: if you want a fallback 'username' for internal reference:
     base_username = email.presence || phone

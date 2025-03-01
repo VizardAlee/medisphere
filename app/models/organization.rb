@@ -9,6 +9,6 @@ class Organization < ApplicationRecord
   scope :divisions, -> { where.not(parent_id: nil) }
 
   has_many :staff, -> { where(role: :staff) }, class_name: "User"
-  enum organization_type: { hospital: "hospital", pharmacy: "pharmacy", emergency: "emergency" }
+  enum :organization_type, %w[hospital pharmacy emergency], prefix: true
   validates :name, :address, :phone, presence: true, uniqueness: true
 end

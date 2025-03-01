@@ -54,6 +54,14 @@ class User < ApplicationRecord
     role == "super_admin"
   end
 
+  def active_for_authentication?
+    super && (!emergency_respondent? || verified?)
+  end
+
+  def emergency_respondent?
+    role == "staff" && staff_role == "emergency_respondent"
+  end
+
   validates :state, presence: true, if: :super_admin?
   validates :emergency_organization_type, presence: true, if: :super_admin?
 

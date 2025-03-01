@@ -2,99 +2,164 @@
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white text-center">
-          <h3 class="mb-0">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn">
+        <!-- Header -->
+        <div class="card-header bg-gradient-primary text-white text-center py-4">
+          <h3 class="mb-0 fw-bold">
+            <i class="bi bi-person-plus-fill me-2"></i>
             <%= @staff.new_record? ? "Add New Staff" : "Edit Staff Details" %>
           </h3>
+          <p class="text-light mt-2 mb-0 small">
+            <%= @staff.new_record? ? "Create a new staff profile" : "Update staff information" %>
+          </p>
         </div>
-        <div class="card-body">
-          <%= form_with model: @staff, url: @staff.persisted? ? staff_path(@staff) : staffs_path, local: true do |f| %>
 
-            <div class="row">
+        <!-- Body -->
+        <div class="card-body p-5 bg-light">
+          <%= form_with model: @staff, url: @staff.persisted? ? staff_path(@staff) : staffs_path, local: true, multipart: true, class: "needs-validation", novalidate: true do |f| %>
+            <div class="row g-4">
               <!-- Name Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :name, "Full Name", class: "form-label fw-bold" %>
-                <%= f.text_field :name, class: "form-control", placeholder: "Enter staff name", required: true %>
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.1s;">
+                <%= f.label :name, "Full Name", class: "form-label fw-semibold text-muted" %>
+                <%= f.text_field :name, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter staff name", required: true %>
+                <div class="invalid-feedback">Please enter a name.</div>
               </div>
 
               <!-- Email Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :email, "Email Address", class: "form-label fw-bold" %>
-                <%= f.email_field :email, class: "form-control", placeholder: "Enter email", required: true %>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.1s;">
+                <%= f.label :email, "Email Address", class: "form-label fw-semibold text-muted" %>
+                <%= f.email_field :email, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter email", required: true %>
+                <div class="invalid-feedback">Please enter a valid email.</div>
               </div>
-            </div>
 
-            <div class="row">
               <!-- Phone Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :phone, "Phone Number", class: "form-label fw-bold" %>
-                <%= f.telephone_field :phone, class: "form-control", placeholder: "Enter phone number", required: true %>
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.2s;">
+                <%= f.label :phone, "Phone Number", class: "form-label fw-semibold text-muted" %>
+                <%= f.telephone_field :phone, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter phone number", required: true %>
+                <div class="invalid-feedback">Please enter a phone number.</div>
               </div>
 
               <!-- Staff Role Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :staff_role, "Staff Role", class: "form-label fw-bold" %>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.2s;">
+                <%= f.label :staff_role, "Staff Role", class: "form-label fw-semibold text-muted" %>
                 <%= f.select :staff_role, 
-                      options_for_select(
-                        User.staff_roles.keys.map { |role| [role.humanize, role] },
-                        @staff.staff_role
-                      ), 
+                      options_for_select(User.staff_roles.keys.map { |role| [role.humanize, role] }, @staff.staff_role), 
                       { prompt: "Select a role" }, 
-                      class: "form-select", 
-                      required: true %>
+                      class: "form-select form-select-lg shadow-sm border-0", required: true %>
+                <div class="invalid-feedback">Please select a role.</div>
               </div>
-            </div>
 
-            <div class="row">
               <!-- Qualification Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :qualification, "Qualification", class: "form-label fw-bold" %>
-                <%= f.text_field :qualification, class: "form-control", placeholder: "e.g., M.D., Pharm.D.", required: false %>
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.3s;">
+                <%= f.label :qualification, "Qualification", class: "form-label fw-semibold text-muted" %>
+                <%= f.text_field :qualification, class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., M.D., Pharm.D." %>
               </div>
 
               <!-- Years of Experience Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :years_of_experience, "Years of Experience", class: "form-label fw-bold" %>
-                <%= f.number_field :years_of_experience, class: "form-control", placeholder: "Enter experience years", min: 0, required: false %>
-              </div>
-            </div>
-
-            <!-- Profile Photo Upload -->
-            <div class="mb-3">
-              <%= f.label :photo, "Profile Photo", class: "form-label fw-bold" %>
-              <%= f.file_field :photo, class: "form-control", accept: "image/*" %>
-              <% if @staff.photo.attached? %>
-                <div class="mt-2">
-                  <strong>Current Photo:</strong>
-                  <br>
-                  <img src="<%= url_for(@staff.photo) %>" alt="Profile Photo" class="img-thumbnail" width="100">
-                </div>
-              <% end %>
-            </div>
-
-            <div class="row">
-              <!-- Password Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :password, "Password", class: "form-label fw-bold" %>
-                <%= f.password_field :password, class: "form-control", placeholder: "Enter password (optional)", required: false %>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.3s;">
+                <%= f.label :years_of_experience, "Years of Experience", class: "form-label fw-semibold text-muted" %>
+                <%= f.number_field :years_of_experience, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter experience years", min: 0 %>
               </div>
 
-              <!-- Password Confirmation Field -->
-              <div class="col-md-6 mb-3">
-                <%= f.label :password_confirmation, "Confirm Password", class: "form-label fw-bold" %>
-                <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Re-enter password", required: false %>
+              <!-- Profile Photo Upload -->
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+                <%= f.label :photo, "Profile Photo", class: "form-label fw-semibold text-muted" %>
+                <%= f.file_field :photo, class: "form-control form-control-lg shadow-sm border-0", accept: "image/*" %>
+                <% if @staff.photo.attached? %>
+                  <div class="mt-3 text-center">
+                    <p class="text-muted small mb-1">Current Photo</p>
+                    <%= image_tag @staff.photo, class: "img-thumbnail rounded-circle shadow-sm", style: "max-width: 120px; height: 120px; object-fit: cover;" %>
+                  </div>
+                <% end %>
+              </div>
+
+              <!-- Password Fields -->
+              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.5s;">
+                <%= f.label :password, "Password", class: "form-label fw-semibold text-muted" %>
+                <%= f.password_field :password, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter password (optional)" %>
+              </div>
+              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.5s;">
+                <%= f.label :password_confirmation, "Confirm Password", class: "form-label fw-semibold text-muted" %>
+                <%= f.password_field :password_confirmation, class: "form-control form-control-lg shadow-sm border-0", placeholder: "Re-enter password" %>
               </div>
             </div>
 
             <!-- Submit Button -->
-            <div class="d-grid">
-              <%= f.submit @staff.new_record? ? "Create Staff" : "Update Staff", class: "btn btn-primary btn-lg" %>
+            <div class="d-grid mt-5 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+              <%= f.submit @staff.new_record? ? "Create Staff" : "Update Staff", class: "btn btn-primary btn-lg shadow-sm fw-semibold" %>
             </div>
-
           <% end %>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #00d4ff);
+  }
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+  .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+  }
+  .btn {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  }
+  .img-thumbnail.rounded-circle {
+    border: 3px solid #e9ecef;
+    transition: border-color 0.3s ease;
+  }
+  .img-thumbnail.rounded-circle:hover {
+    border-color: #007bff;
+  }
+  .form-label {
+    font-size: 1.1rem;
+  }
+  .form-control-lg, .form-select-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1.1rem;
+    border-radius: 0.5rem;
+  }
+  .invalid-feedback {
+    font-size: 0.9rem;
+  }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+<!-- Bootstrap Client-Side Validation Script -->
+<script>
+  // Enable Bootstrap validation styles
+  (function () {
+    'use strict';
+    window.addEventListener('load', function () {
+      var forms = document.getElementsByClassName('needs-validation');
+      Array.prototype.filter.call(forms, function (form) {
+        form.addEventListener('submit', function (event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+</script>

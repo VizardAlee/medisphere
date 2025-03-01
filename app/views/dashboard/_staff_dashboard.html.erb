@@ -1,95 +1,160 @@
-<div class="container py-4">
+<!-- app/views/dashboard/staff_dashboard.html.erb -->
+<div class="container py-5">
   <!-- Welcome Section -->
-  <div class="text-center mb-5">
-    <h1 class="display-5 fw-bold text-primary">Welcome, <%= current_user.name %>!</h1>
-    <p class="lead text-muted">Manage and update patient health records seamlessly.</p>
+  <div class="text-center mb-5 animate__animated animate__fadeInDown">
+    <h1 class="display-4 fw-bold text-primary mb-3">
+      <i class="bi bi-person-workspace me-2"></i>Welcome, <%= current_user.name %>!
+    </h1>
+    <p class="lead text-muted fst-italic">Manage and update patient health records seamlessly</p>
+    <hr class="w-25 mx-auto border-primary border-3 opacity-75">
   </div>
 
   <!-- Dashboard Quick Actions -->
-  <div class="row mb-4">
+  <div class="row mb-5 g-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
     <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
-          <h5 class="card-title text-primary">Total Patients</h5>
-          <p class="fs-3 fw-bold"><%= @patients.count %></p>
-          <a href="<%= patients_path %>" class="btn btn-outline-primary btn-sm">View All Patients</a>
+      <div class="card shadow-sm border-0 rounded-3 hover-card bg-gradient-light">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-people text-primary mb-3" style="font-size: 2.5rem;"></i>
+          <h5 class="card-title text-primary fw-bold mb-2">Total Patients</h5>
+          <p class="fs-3 fw-bold text-dark"><%= @patients&.count || 0 %></p>
+          <%= link_to "View All Patients", patients_path, class: "btn btn-outline-primary btn shadow-sm mt-2", data: { turbo: false } %>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
-          <h5 class="card-title text-success">New Patient</h5>
-          <p class="fs-3"><i class="fas fa-user-plus text-success"></i></p>
-          <a href="<%= new_patient_path %>" class="btn btn-success btn-sm">Register Patient</a>
+      <div class="card shadow-sm border-0 rounded-3 hover-card bg-gradient-light">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-person-plus text-success mb-3" style="font-size: 2.5rem;"></i>
+          <h5 class="card-title text-success fw-bold mb-2">New Patient</h5>
+          <p class="fs-3 text-success"><i class="bi bi-person-plus-fill"></i></p>
+          <%= link_to "Register Patient", new_patient_path, class: "btn btn-success btn shadow-sm mt-2", data: { turbo: false } %>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
-          <h5 class="card-title text-info">Health Records</h5>
-          <p class="fs-3"><i class="fas fa-notes-medical text-info"></i></p>
-          <a href="<%= health_records_path %>" class="btn btn-info btn-sm">View Records</a>
+      <div class="card shadow-sm border-0 rounded-3 hover-card bg-gradient-light">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-file-medical text-info mb-3" style="font-size: 2.5rem;"></i>
+          <h5 class="card-title text-info fw-bold mb-2">Health Records</h5>
+          <p class="fs-3 text-info"><i class="bi bi-files"></i></p>
+          <%= link_to "View Records", health_records_path, class: "btn btn-info btn shadow-sm mt-2", data: { turbo: false } %>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Patient Records Section -->
-  <div class="card shadow-sm border-0">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-      <h2 class="mb-0">Patient Health Records</h2>
-      <a href="<%= new_patient_path %>" class="btn btn-light btn-sm">+ Add Patient</a>
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+    <div class="card-header bg-gradient-primary text-white py-3 d-flex justify-content-between align-items-center">
+      <h3 class="mb-0 fw-bold fs-4">
+        <i class="bi bi-file-earmark-medical me-2"></i>Patient Health Records
+      </h3>
+      <%= link_to new_patient_path, class: "btn btn-outline-light btn-sm shadow-sm", data: { turbo: false } do %>
+        <i class="bi bi-plus-circle me-2"></i>Add Patient
+      <% end %>
     </div>
-    <div class="card-body">
-      <% if @patients.any? %>
+    <div class="card-body p-4 bg-light">
+      <% if @patients&.any? %>
         <!-- Search Bar -->
-        <div class="mb-3">
-          <input type="text" class="form-control" id="patientSearch" placeholder="Search patients by name..." onkeyup="filterPatients()">
+        <div class="mb-3 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white border-0 shadow-sm">
+              <i class="bi bi-search text-muted" style="font-size: 0.875rem;"></i>
+            </span>
+            <input type="text" class="form-control border-0 shadow-sm" id="patientSearch" placeholder="Search patients by name..." onkeyup="filterPatients()">
+          </div>
         </div>
 
-        <table class="table table-hover">
-          <thead class="table-light">
-            <tr>
-              <th>Patient Name</th>
-              <th>Latest Diagnosis</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="patientTable">
-            <% @patients.each do |patient| %>
-              <% latest_record = patient.health_records.order(created_at: :desc).first %>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+            <thead class="table-dark bg-gradient-dark">
               <tr>
-                <td><%= patient.name %></td>
-                <td><%= latest_record ? latest_record.diagnosis.truncate(50) : "No diagnosis yet" %></td>
-                <td>
-                  <a href="<%= patient_path(patient) %>" class="btn btn-sm btn-outline-primary">Profile</a>
-                  <% if latest_record %>
-                    <a href="<%= patient_health_record_path(patient, latest_record) %>" class="btn btn-sm btn-outline-info">View</a>
-                  <% end %>
-                  <a href="<%= new_health_record_path(patient_id: patient.id) %>" class="btn btn-sm btn-outline-success">Add Record</a>
-                </td>
+                <th scope="col" class="py-2 px-3 text-sm">Patient Name</th>
+                <th scope="col" class="py-2 px-3 text-sm">Latest Diagnosis</th>
+                <th scope="col" class="py-2 px-3 text-sm">Actions</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody id="patientTable">
+              <% @patients.each_with_index do |patient, index| %>
+                <% latest_record = patient.health_records.order(created_at: :desc).first %>
+                <tr class="animate__animated animate__fadeInUp" style="animation-delay: <%= (index * 0.1) %>s;">
+                  <td class="fw-medium px-3 py-2 text-sm"><%= patient.name %></td>
+                  <td class="px-3 py-2 text-sm"><%= latest_record ? latest_record.diagnosis.truncate(50) : "No diagnosis yet" %></td>
+                  <td class="px-3 py-2">
+                    <div class="btn-group" role="group">
+                      <%= link_to patient_path(patient), class: "btn btn-outline-primary btn-sm shadow-sm", data: { turbo: false } do %>
+                        <i class="bi bi-eye" style="font-size: 0.875rem;"></i>
+                      <% end %>
+                      <% if latest_record %>
+                        <%= link_to patient_health_record_path(patient, latest_record), class: "btn btn-outline-info btn-sm shadow-sm", data: { turbo: false } do %>
+                          <i class="bi bi-file-text" style="font-size: 0.875rem;"></i>
+                        <% end %>
+                      <% end %>
+                      <%= link_to new_health_record_path(patient_id: patient.id), class: "btn btn-outline-success btn-sm shadow-sm", data: { turbo: false } do %>
+                        <i class="bi bi-plus-circle" style="font-size: 0.875rem;"></i>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       <% else %>
-        <div class="alert alert-warning text-center">
-          No patients found.
-          <a href="<%= new_patient_path %>" class="btn btn-sm btn-success">Register a Patient</a>
+        <div class="alert alert-warning alert-dismissible fade show shadow-sm rounded-3 text-center animate__animated animate__fadeInUp" style="animation-delay: 0.6s;" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          No patients found. <%= link_to "Register a Patient", new_patient_path, class: "btn btn-sm btn-success ms-2" %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <% end %>
     </div>
   </div>
 </div>
 
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
+  .bg-gradient-dark { background: linear-gradient(135deg, #343a40, #495057); }
+  .bg-gradient-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+  .hover-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .hover-card:hover {
+    transform: translateY(-5px); /* Reduced from -8px for subtler lift */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important; /* Softer shadow */
+  }
+  .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card:hover {
+    transform: translateY(-5px); /* Reduced from -8px */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important; /* Softer shadow */
+  }
+  .shadow-sm { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important; /* Even softer base shadow */ }
+  .btn { transition: all 0.3s ease; }
+  .btn:hover {
+    transform: translateY(-2px); /* Reduced from -3px */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important; /* Softer button shadow */
+  }
+  .btn-outline-light, .btn-outline-primary, .btn-success, .btn-info { border-width: 2px; }
+  .form-control { transition: all 0.3s ease; font-size: 0.875rem; }
+  .form-control:focus { box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); border-color: #007bff; }
+  .input-group-sm .form-control { padding: 0.5rem 0.75rem; height: calc(1.5em + 0.5rem + 2px); }
+  .input-group-text { font-size: 0.875rem; padding: 0.5rem 0.75rem; }
+  .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.1); transition: background-color 0.2s ease; }
+  .card-body i { font-size: 2.5rem; transition: transform 0.3s ease; }
+  .hover-card:hover .card-body i { transform: scale(1.1); }
+  .text-sm { font-size: 0.875rem; }
+  .table th, .table td { vertical-align: middle; }
+  .table th { font-size: 1rem; }
+  .table td { font-size: 0.9rem; }
+  .btn-group i { font-size: 0.875rem; }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
 <!-- JavaScript for Patient Search -->
 <script>
   function filterPatients() {
     let input = document.getElementById("patientSearch").value.toLowerCase();
     let rows = document.querySelectorAll("#patientTable tr");
-
     rows.forEach(row => {
       let name = row.getElementsByTagName("td")[0].textContent.toLowerCase();
       row.style.display = name.includes(input) ? "" : "none";

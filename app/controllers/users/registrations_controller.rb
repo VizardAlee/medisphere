@@ -14,51 +14,63 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def create
-    # Build and save the organization
+    logger.debug "Sign-up params: #{params.inspect}"
+    build_resource(sign_up_params)
+
+    # Create and save the organization first
     organization = Organization.new(
       name: params[:organization_name],
       address: params[:organization_address],
       phone: params[:organization_phone],
       organization_type: params[:organization_type],
-      state: params[:state],
-      emergency_organization_type: params[:emergency_organization_type],
-      parent_id: 3 # Assuming this links to "Kaduna State Police"
+      state: params[:state].presence,
+      emergency_organization_type: params[:emergency_organization_type].presence
     )
 
-    if organization.save
-      # Set user role and state
-      user_role = params[:organization_type] == "emergency" ? "emergency_admin" : "admin"
-      resource = build_resource(sign_up_params.merge(
-        organization_id: organization.id,
-        role: user_role,
-        state: organization.state # Set user's state to match organization
-      ))
-      resource.save
+    # Wrap in a transaction to ensure both save or neither does
+    ActiveRecord::Base.transaction do
+      if organization.save
+        resource.organization = organization
+        resource.role = "admin"
 
-      # Redirect after signup
-      if resource.persisted?
-        sign_up(resource_name, resource)
-        redirect_to emergency_respondents_path
+        if resource.save
+          logger.debug "User and organization saved successfully"
+          if resource.active_for_authentication?
+            set_flash_message! :notice, :signed_up
+            sign_up(resource_name, resource)
+            respond_with resource, location: after_sign_up_path_for(resource)
+          else
+            set_flash_message! :notice, :signed_up_but_inactive
+            expire_data_after_sign_in!
+            respond_with resource, location: after_inactive_sign_up_path_for(resource)
+          end
+        else
+          logger.debug "Failed to save user: #{resource.errors.full_messages}"
+          raise ActiveRecord::Rollback # Roll back if user fails
+        end
       else
-        render :new
+        logger.debug "Failed to save organization: #{organization.errors.full_messages}"
+        raise ActiveRecord::Rollback # Roll back if organization fails
       end
-    else
-      render :new
+    end
+
+    # If transaction fails, handle errors
+    unless performed? # Check if response already sent
+      clean_up_passwords resource
+      set_minimum_password_length
+      resource.errors.add(:base, "Failed to create organization or user") unless resource.errors.any?
+      respond_with resource
     end
   end
 
-  private
+  protected
 
-  def sign_up_params
-    params.require(:user).permit(:name, :email, :phone, :password, :password_confirmation)
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :phone, :password, :password_confirmation])
   end
 
   def after_sign_up_path_for(resource)
-    if resource.emergency_admin?
-      emergency_respondents_path # Direct emergency admins to their specific dashboard
-    else
-      root_path
-    end
+    root_path
   end
 end
 

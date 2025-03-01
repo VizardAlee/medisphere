@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
   <div class="container">
     <!-- Brand / Logo -->
-    <a class="navbar-brand" href="<%= root_path %>">
+    <a class="navbar-brand fw-bold text-danger" href="<%= root_path %>">
       <% if user_signed_in? && current_user.organization.present? %>
         <%= current_user.organization.name %>
       <% else %>
@@ -10,89 +10,107 @@
     </a>
 
     <!-- Mobile Toggler -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <!-- Navbar Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="<%= root_path %>">Home</a>
+          <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(root_path) %>" href="<%= root_path %>">
+            <i class="bi bi-house-door me-1"></i> Home
+          </a>
         </li>
 
         <% if user_signed_in? %>
           <!-- Admin -->
           <% if current_user.admin? %>
             <li class="nav-item">
-              <a class="nav-link" href="<%= staffs_path %>">Manage Staff</a>
+              <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(staffs_path) %>" href="<%= staffs_path %>">
+                <i class="bi bi-people me-1"></i> Manage Staff
+              </a>
             </li>
-            <% if current_user.organization.organization_type == "emergency_respondent" %>
+            <% if current_user.organization&.organization_type == "emergency_respondent" %>
               <li class="nav-item">
-                <a class="nav-link" href="<%= admin_emergency_respondents_path %>">Manage Emergency Respondents</a>
+                <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(admin_emergency_respondents_path) %>" href="<%= admin_emergency_respondents_path %>">
+                  <i class="bi bi-person-lines-fill me-1"></i> Manage Emergency Respondents
+                </a>
               </li>
             <% end %>
 
-          <!-- Emergency Respondent -->
-          <% elsif current_user.respond_to?(:emergency_respondent?) && current_user.emergency_respondent? %>
+          <!-- Staff (non-respondent) -->
+          <% elsif current_user.staff? && !current_user.emergency_respondent? %>
             <li class="nav-item">
-              <a class="nav-link" href="<%= emergency_records_path %>">Emergency Records</a>
+              <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(patients_path) %>" href="<%= patients_path %>">
+                <i class="bi bi-person-heart me-1"></i> Patients
+              </a>
             </li>
           <% end %>
-
-          <!-- Staff -->
-          <% if current_user.staff? %>
-            <li class="nav-item">
-              <a class="nav-link" href="<%= patients_path %>">Patients</a>
-            </li>
-          <% end %>
-
         <% elsif patient_signed_in? %>
           <li class="nav-item">
-            <a class="nav-link" href="<%= patient_health_records_path(current_patient) %>">My Health Records</a>
+            <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(patient_health_records_path(current_patient)) %>" href="<%= patient_health_records_path(current_patient) %>">
+              <i class="bi bi-file-medical me-1"></i> My Health Records
+            </a>
           </li>
         <% else %>
           <!-- Public / Unauthenticated -->
           <li class="nav-item">
-            <a class="nav-link" href="<%= new_user_registration_path %>">Sign Up (Staff)</a>
+            <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(new_user_registration_path) %>" href="<%= new_user_registration_path %>">
+              <i class="bi bi-person-plus me-1"></i> Sign Up (Staff)
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<%= new_user_session_path %>">Sign In (Staff)</a>
+            <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(new_user_session_path) %>" href="<%= new_user_session_path %>">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In (Staff)
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<%= new_patient_session_path %>">Patient Login</a>
+            <a class="nav-link text-light px-3 py-2 rounded <%= 'active fw-bold' if current_page?(new_patient_session_path) %>" href="<%= new_patient_session_path %>">
+              <i class="bi bi-person me-1"></i> Patient Login
+            </a>
           </li>
         <% end %>
       </ul>
 
       <!-- Right Side: Profile Dropdown -->
-      <ul class="navbar-nav">
+      <ul class="navbar-nav ms-auto">
         <% if user_signed_in? %>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              <%= current_user.name || "Profile" %>
+            <a class="nav-link text-light dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-2"></i>
+              <span><%= current_user.name || "Profile" %></span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul class="dropdown-menu dropdown-menu-end bg-dark border-0 shadow">
               <li>
-                <%= link_to "View Profile", staff_path(current_user), class: "dropdown-item" %>
+                <%= link_to staff_path(current_user), class: "dropdown-item text-light hover-bg-danger" do %>
+                  <i class="bi bi-person me-2"></i> View Profile
+                <% end %>
               </li>
               <li>
-                <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "dropdown-item", data: { turbo_method: :delete } %>
+                <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item text-light hover-bg-danger btn btn-link", data: { turbo: false } do %>
+                  <i class="bi bi-box-arrow-right me-2"></i> Logout
+                <% end %>
               </li>
             </ul>
           </li>
 
         <% elsif patient_signed_in? %>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              <%= current_patient.name || "My Account" %>
+            <a class="nav-link text-light dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-2"></i>
+              <span><%= current_patient.name || "My Account" %></span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul class="dropdown-menu dropdown-menu-end bg-dark border-0 shadow">
               <li>
-                <%= link_to "View Profile", patient_path(current_patient), class: "dropdown-item" %>
+                <%= link_to patient_path(current_patient), class: "dropdown-item text-light hover-bg-danger" do %>
+                  <i class="bi bi-person me-2"></i> View Profile
+                <% end %>
               </li>
               <li>
-                <%= link_to "Logout", destroy_patient_session_path, method: :delete, class: "dropdown-item", data: { turbo_method: :delete } %>
+                <%= button_to destroy_patient_session_path, method: :delete, class: "dropdown-item text-light hover-bg-danger btn btn-link", data: { turbo: false } do %>
+                  <i class="bi bi-box-arrow-right me-2"></i> Logout
+                <% end %>
               </li>
             </ul>
           </li>
@@ -101,3 +119,38 @@
     </div>
   </div>
 </nav>
+
+<!-- Custom CSS -->
+<style>
+  .navbar {
+    transition: background-color 0.3s ease;
+  }
+  .navbar-brand {
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+  }
+  .navbar-brand:hover {
+    color: #ff6b6b !important;
+  }
+  .nav-link {
+    transition: all 0.3s ease;
+  }
+  .nav-link:hover {
+    background-color: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b !important;
+  }
+  .nav-link.active {
+    background-color: rgba(255, 107, 107, 0.3);
+    color: #fff !important;
+  }
+  .dropdown-menu {
+    min-width: 180px;
+  }
+  .dropdown-item {
+    transition: background-color 0.3s ease;
+  }
+  .hover-bg-danger:hover {
+    background-color: #ff6b6b !important;
+    color: #fff !important;
+  }
+</style>

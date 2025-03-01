@@ -1,33 +1,35 @@
+<!-- app/views/home/index.html.erb -->
 <div class="container py-5">
   <!-- Hero Section -->
-  <div class="row justify-content-center text-center">
-    <div class="col-md-10">
-      <h1 class="fw-bold text-primary">Your Health Records, Anytime, Anywhere</h1>
-      <p class="lead text-muted">
-        MediSphere helps patients access their medical records, hospitals manage patient data, 
-        and emergency responders get vital health information when every second counts.
+  <div class="row justify-content-center text-center mb-5 animate__animated animate__fadeIn">
+    <div class="col-md-10 col-lg-8">
+      <h1 class="display-3 fw-bold text-primary mb-3 animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+        <i class="bi bi-heart-pulse me-2"></i>Your Health Records, Anytime, Anywhere
+      </h1>
+      <p class="lead text-muted mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+        MediSphere empowers patients to access medical records, hospitals to manage data seamlessly, 
+        and emergency responders to retrieve vital health info when it matters most.
       </p>
 
       <% if current_user.nil? %>
-        <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
-          <%= link_to "User Login", new_session_path(:user), class: "btn btn-outline-primary btn-lg" %>
-          <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-lg btn-warning text-dark fw-bold px-4" %>
+        <div class="mt-4 d-flex flex-wrap justify-content-center gap-3 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+          <%= link_to "User Login", new_session_path(:user), class: "btn btn-outline-primary btn-lg shadow-sm fw-semibold" %>
+          <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-lg btn-warning text-dark fw-bold px-5 shadow-sm" %>
         </div>
-        <p class="mt-2 text-muted">
-          Not sure if your data is on MediSphere? Enter your phone number and find out.
+        <p class="mt-3 text-muted small animate__animated animate__fadeInUp" style="animation-delay: 0.8s;">
+          Not sure if your data is on MediSphere? Enter your phone number to find out.
         </p>
       <% else %>
-        <!-- Display Approval Status for Signed-In Users -->
-        <div class="mt-4">
+        <div class="mt-4 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
           <% if current_user.organization %>
             <p class="text-muted">
-              Your organization: <strong><%= current_user.organization.name %></strong><br>
+              Your organization: <strong class="text-primary"><%= current_user.organization.name %></strong><br>
               Status: 
               <% if current_user.organization.approved %>
-                <span class="badge bg-success">Approved</span>
+                <span class="badge bg-success rounded-pill px-3 py-2">Approved</span>
               <% else %>
-                <span class="badge bg-warning">Pending Approval</span>
-                <small class="d-block mt-1">Awaiting super admin approval.</small>
+                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending Approval</span>
+                <small class="d-block mt-2 text-muted fst-italic">Awaiting super admin approval.</small>
               <% end %>
             </p>
           <% end %>
@@ -37,68 +39,116 @@
   </div>
 
   <!-- Feature Sections -->
-  <div class="row mt-5">
+  <div class="row mt-5 g-4">
     <!-- For Patients -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
-          <h5 class="card-title text-success fw-bold">For Patients</h5>
+    <div class="col-md-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.2s;">
+      <div class="card shadow-sm border-0 rounded-3 h-100 hover-card">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-person-heart text-success mb-3" style="font-size: 3rem;"></i>
+          <h5 class="card-title text-success fw-bold mb-3">For Patients</h5>
           <p class="card-text text-muted">
-            Access your medical history, prescriptions, and diagnoses in one place. 
-            No more missing records—just log in with your phone number.
+            Access your medical history, prescriptions, and diagnoses in one secure place. 
+            Log in with your phone number—no more lost records.
           </p>
-          <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-warning text-dark fw-bold" %>
+          <%= link_to "Check Your Records", new_session_path(:patient), class: "btn btn-warning text-dark fw-bold mt-3 shadow-sm" %>
         </div>
       </div>
     </div>
 
     <!-- For Hospitals & Pharmacies -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
-          <h5 class="card-title text-primary fw-bold">For Hospitals & Pharmacies</h5>
+    <div class="col-md-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+      <div class="card shadow-sm border-0 rounded-3 h-100 hover-card">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-hospital text-primary mb-3" style="font-size: 3rem;"></i>
+          <h5 class="card-title text-primary fw-bold mb-3">For Hospitals & Pharmacies</h5>
           <p class="card-text text-muted">
-            Securely manage patient records, update diagnoses, and provide seamless healthcare services.
+            Securely manage patient records, update diagnoses, and streamline healthcare services.
           </p>
-          <%= link_to "Join MediSphere", new_user_registration_path, class: "btn btn-primary" %>
+          <%= link_to "Join MediSphere", new_user_registration_path, class: "btn btn-primary mt-3 shadow-sm" %>
         </div>
       </div>
     </div>
 
     <!-- For Emergency Responders -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
-          <h5 class="card-title text-danger fw-bold">For Emergency Responders</h5>
+    <div class="col-md-4 animate__animated animate__fadeInRight" style="animation-delay: 0.6s;">
+      <div class="card shadow-sm border-0 rounded-3 h-100 hover-card">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-shield-shaded text-danger mb-3" style="font-size: 3rem;"></i>
+          <h5 class="card-title text-danger fw-bold mb-3">For Emergency Responders</h5>
           <p class="card-text text-muted">
-            Register your division to gain secure access to emergency patient data when needed.
+            Register your division to access critical patient data during emergencies.
           </p>
           <% if current_user && current_user.organization&.approved %>
-            <%= link_to "Create Emergency Respondents", new_emergency_respondent_path, class: "btn btn-danger" %>
+            <%= link_to "Create Emergency Respondents", new_emergency_respondent_path, class: "btn btn-danger mt-3 shadow-sm" %>
           <% elsif current_user %>
-            <button class="btn btn-danger disabled" title="Pending organization approval">Create Emergency Respondents</button>
-            <small class="d-block mt-2 text-muted">Available once approved by a super admin.</small>
+            <button class="btn btn-danger mt-3 shadow-sm disabled" title="Pending organization approval">Create Emergency Respondents</button>
+            <small class="d-block mt-2 text-muted">Available after super admin approval.</small>
           <% else %>
-            <%= link_to "Register Your Division", new_user_registration_path, class: "btn btn-danger" %>
+            <%= link_to "Register Your Division", new_user_registration_path, class: "btn btn-danger mt-3 shadow-sm" %>
           <% end %>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Emergency Responders Section (Only if organizations exist) -->
-  <%= render "home/emergency_respondents" %>
+  <!-- Emergency Responders Section -->
+  <div class="mt-5 animate__animated animate__fadeInUp" style="animation-delay: 0.8s;">
+    <%= render "home/emergency_respondents" %>
+  </div>
 
   <!-- Future Feature Teaser -->
-  <div class="row mt-5">
+  <div class="row mt-5 animate__animated animate__fadeInUp" style="animation-delay: 1s;">
     <div class="col-md-8 offset-md-2 text-center">
-      <div class="p-4 bg-light rounded shadow-sm">
-        <h4 class="fw-bold text-dark">Coming Soon: Symptom-Based Doctor Matching</h4>
-        <p class="text-muted">
-          Not sure what’s wrong? Share your symptoms and get connected with doctors who specialize in your condition.
+      <div class="p-5 bg-light rounded-3 shadow-sm border border-primary-subtle">
+        <h4 class="fw-bold text-dark mb-3">
+          <i class="bi bi-star-fill text-warning me-2"></i>Coming Soon: Symptom-Based Doctor Matching
+        </h4>
+        <p class="text-muted mb-4">
+          Share your symptoms and connect with doctors specializing in your condition—healthcare tailored to you.
         </p>
-        <button class="btn btn-outline-secondary disabled">Stay Tuned</button>
+        <button class="btn btn-outline-secondary btn-lg shadow-sm disabled">Stay Tuned</button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #00d4ff);
+  }
+  .hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .hover-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+  }
+  .btn {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  }
+  .btn-outline-primary, .btn-warning, .btn-danger {
+    border-width: 2px;
+  }
+  .badge {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+  }
+  .card-body i {
+    font-size: 3rem;
+    transition: transform 0.3s ease;
+  }
+  .hover-card:hover .card-body i {
+    transform: scale(1.1);
+  }
+  .bg-light {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
