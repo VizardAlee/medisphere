@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     end
   end
 
+  post '/emergency_access_logs/:id/report', to: 'emergency_access_logs#report', as: :report_emergency_access
   # Health Check & PWA
   get "up" => "rails/health#show", as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker

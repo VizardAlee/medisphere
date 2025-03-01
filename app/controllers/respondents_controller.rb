@@ -7,6 +7,14 @@ class RespondentsController < ApplicationController
       @patient = Patient.find_by(phone: params[:query])
       if @patient
         @latest_health_record = HealthRecord.where(patient_id: @patient.id).order(id: :desc).first
+        # Log the access
+        EmergencyAccessLog.create(
+          patient: @patient,
+          user: current_user,
+          accessed_at: Time.current
+        )
+        # Notify the patient
+        PatientMailer.emergency_access_notification(@patient, current_user).deliver_later
       end
     end
   end

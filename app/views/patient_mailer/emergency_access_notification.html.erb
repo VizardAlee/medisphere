@@ -1,0 +1,8 @@
+<!-- app/views/patient_mailer/emergency_access_notification.html.erb -->
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #007bff;">Emergency Access Notification</h2>
+  <p>Dear <%= @patient.name %>,</p>
+  <p>Your emergency information was accessed by <%= @responder.name %> on <%= Time.current.strftime("%B %d, %Y at %I:%M %p") %>.</p>
+  <p>If you believe this access was unauthorized, please log into your dashboard and report it under the "Access Logs" tab.</p>
+  <p style="margin-top: 20px;">Thank you,<br>The Emergency Response Team</p>
+</div>

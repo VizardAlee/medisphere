@@ -25,6 +25,7 @@ class User < ApplicationRecord
 
   belongs_to :organization, optional: true
   has_many :health_records, dependent: :destroy
+  has_many :emergency_access_logs, dependent: :destroy
 
   # Emergency Respondent Verification
   scope :verified_emergency_respondents, -> { where(role: :emergency_respondent, verified: true) }
