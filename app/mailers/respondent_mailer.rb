@@ -1,7 +1,7 @@
 class RespondentMailer < ApplicationMailer
-  def verification_notification(respondent, password)
+  def verification_notification(respondent, temp_password)
     @respondent = respondent
-    @password = password
-    mail(to: @respondent.email, subject: "Your Emergency Respondent Account is Verified")
+    @temp_password = temp_password
+    mail(to: @respondent.email, subject: "Your Account Has Been Verified")
   end
 end

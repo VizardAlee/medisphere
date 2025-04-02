@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_26_200639) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_10_111750) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,14 +52,23 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_26_200639) do
     t.index ["user_id"], name: "index_emergency_access_logs_on_user_id"
   end
 
+  create_table "health_record_organizations", force: :cascade do |t|
+    t.bigint "health_record_id", null: false
+    t.bigint "organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["health_record_id"], name: "index_health_record_organizations_on_health_record_id"
+    t.index ["organization_id"], name: "index_health_record_organizations_on_organization_id"
+  end
+
   create_table "health_records", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.text "diagnosis"
-    t.text "prescription"
     t.bigint "updated_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.text "notes"
     t.index ["patient_id"], name: "index_health_records_on_patient_id"
     t.index ["user_id"], name: "index_health_records_on_user_id"
   end
@@ -69,6 +78,18 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_26_200639) do
     t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "medications", force: :cascade do |t|
+    t.bigint "health_record_id", null: false
+    t.string "name", null: false
+    t.string "dosage"
+    t.integer "duration_days"
+    t.datetime "start_date", null: false
+    t.datetime "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["health_record_id"], name: "index_medications_on_health_record_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -171,8 +192,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_26_200639) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "emergency_access_logs", "patients"
   add_foreign_key "emergency_access_logs", "users"
+  add_foreign_key "health_record_organizations", "health_records"
+  add_foreign_key "health_record_organizations", "organizations"
   add_foreign_key "health_records", "patients"
   add_foreign_key "health_records", "users"
+  add_foreign_key "medications", "health_records"
   add_foreign_key "organizations", "organizations", column: "parent_id"
   add_foreign_key "patients", "hospitals"
   add_foreign_key "patients", "organizations"

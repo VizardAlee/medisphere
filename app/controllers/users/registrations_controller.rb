@@ -1,14 +1,12 @@
+# app/controllers/users/registrations_controller.rb
 class Users::RegistrationsController < Devise::RegistrationsController
   def new
     super do |resource|
-      # Define states array for the view
-      @states = [
-        "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
-        "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe",
-        "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
-        "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
-        "Sokoto", "Taraba", "Yobe", "Zamfara"
-      ]
+      @states = ["Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+                 "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe",
+                 "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
+                 "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
+                 "Sokoto", "Taraba", "Yobe", "Zamfara"]
       @emergency_organizations = ["Police", "Road Safety", "Fire Service"]
     end
   end
@@ -17,19 +15,21 @@ class Users::RegistrationsController < Devise::RegistrationsController
     logger.debug "Sign-up params: #{params.inspect}"
     build_resource(sign_up_params)
 
-    # Create and save the organization first
-    organization = Organization.new(
+    # Build and save organization first
+    organization_params = {
       name: params[:organization_name],
       address: params[:organization_address],
       phone: params[:organization_phone],
-      organization_type: params[:organization_type],
+      organization_type: params[:organization_type] || "hospital",
       state: params[:state].presence,
       emergency_organization_type: params[:emergency_organization_type].presence
-    )
+    }
+    logger.debug "Organization params: #{organization_params.inspect}" # Add this for debugging
+    organization = Organization.new(organization_params)
 
-    # Wrap in a transaction to ensure both save or neither does
     ActiveRecord::Base.transaction do
       if organization.save
+        logger.debug "Organization saved: #{organization.inspect}" # Debug after save
         resource.organization = organization
         resource.role = "admin"
 
@@ -46,20 +46,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
           end
         else
           logger.debug "Failed to save user: #{resource.errors.full_messages}"
-          raise ActiveRecord::Rollback # Roll back if user fails
+          raise ActiveRecord::Rollback
         end
       else
         logger.debug "Failed to save organization: #{organization.errors.full_messages}"
-        raise ActiveRecord::Rollback # Roll back if organization fails
+        raise ActiveRecord::Rollback
       end
     end
 
-    # If transaction fails, handle errors
-    unless performed? # Check if response already sent
+    unless performed?
       clean_up_passwords resource
       set_minimum_password_length
-      resource.errors.add(:base, "Failed to create organization or user") unless resource.errors.any?
-      respond_with resource
+      @states = ["Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+                 "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe",
+                 "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
+                 "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
+                 "Sokoto", "Taraba", "Yobe", "Zamfara"]
+      @emergency_organizations = ["Police", "Road Safety", "Fire Service"]
+      flash[:alert] = (resource.errors.full_messages + organization.errors.full_messages).join(", ")
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -73,4 +78,3 @@ class Users::RegistrationsController < Devise::RegistrationsController
     root_path
   end
 end
-

@@ -1,9 +1,9 @@
+# app/controllers/staffs_controller.rb
 class StaffsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!, only: %i[new create]
   before_action :set_staff, only: %i[edit update destroy show]
   layout "application", only: %i[edit update]
-
 
   def new
     @staff = User.new
@@ -25,18 +25,31 @@ class StaffsController < ApplicationController
   end
 
   def create
-    @staff = User.new(staff_params.except(:photo))
+    @staff = User.new(staff_params.except(:photo, :password, :password_confirmation)) # Exclude password fields initially
     @staff.role = :staff
     @staff.organization_id = current_user.organization_id
-    @staff.staff_role = User.staff_roles[params[:user][:staff_role]] if params[:user][:staff_role].present?
+
+    if current_user.organization.organization_type == "emergency"
+      @staff.staff_role = "emergency_respondent"
+      @staff.verified = false # Emergency respondents start unverified
+      # No password set here; handled post-verification
+    else
+      @staff.staff_role = User.staff_roles[params[:user][:staff_role]] if params[:user][:staff_role].present?
+      @staff.password = staff_params[:password] if staff_params[:password].present?
+      @staff.password_confirmation = staff_params[:password_confirmation] if staff_params[:password_confirmation].present?
+    end
 
     if staff_params[:photo].present?
       @staff.photo.attach(staff_params[:photo])
     end
 
     if @staff.save
-      StaffMailer.welcome_email(@staff, staff_params[:password]).deliver_later
-      flash[:notice] = "Staff created successfully, and a welcome email has been sent."
+      if @staff.emergency_respondent?
+        flash[:notice] = "Emergency Respondent created successfully. They will receive an email to set their password once verified by the Super Admin."
+      else
+        StaffMailer.welcome_email(@staff, staff_params[:password]).deliver_later
+        flash[:notice] = "Staff created successfully, and a welcome email has been sent."
+      end
       redirect_to dashboard_path
     else
       Rails.logger.info "❌ Staff creation failed: #{@staff.errors.full_messages.join(', ')}"
@@ -63,23 +76,6 @@ class StaffsController < ApplicationController
       render :edit, status: :unprocessable_entity
     end
   end
-  
-  def staff_params
-    Rails.logger.debug "Received staff params: #{params[:user].inspect}"
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :staff_role, 
-                                :qualification, :years_of_experience, :phone, :photo)
-  end
-  
-  def save_uploaded_file(photo)
-    filename = "#{SecureRandom.hex(10)}_#{photo.original_filename}"
-    filepath = Rails.root.join('public', 'uploads', filename)
-    FileUtils.mkdir_p(Rails.root.join('public', 'uploads')) # Ensure directory exists
-    File.open(filepath, 'wb') { |f| f.write(photo.read) }
-    "/uploads/#{filename}"
-  rescue StandardError => e
-    Rails.logger.error "Failed to save uploaded file: #{e.message}"
-    nil
-  end
 
   def destroy
     @staff.destroy
@@ -94,8 +90,6 @@ class StaffsController < ApplicationController
       end
     end
   end
-  
-  
 
   def show
     @staff = User.find(params[:id])
@@ -112,7 +106,7 @@ class StaffsController < ApplicationController
   end
 
   def staff_params
-    Rails.logger.debug "Received staff_role: #{params[:user][:staff_role].inspect}"
+    Rails.logger.debug "Received staff params: #{params[:user].inspect}"
     params.require(:user).permit(:name, :email, :password, :password_confirmation, :staff_role, 
                                 :qualification, :years_of_experience, :phone, :photo)
   end
@@ -127,10 +121,12 @@ class StaffsController < ApplicationController
     FileUtils.mkdir_p(Rails.root.join('public', 'uploads')) # Ensure directory exists
     File.open(filepath, 'wb') { |f| f.write(photo.read) }
     "/uploads/#{filename}"
+  rescue StandardError => e
+    Rails.logger.error "Failed to save uploaded file: #{e.message}"
+    nil
   end
 
   def current_organization
     current_user.organization
   end
-
 end

@@ -48,8 +48,9 @@ class Patient < ApplicationRecord
   belongs_to :organization, optional: true
   belongs_to :hospital, optional: true
   has_one_attached :photo
-  has_many :health_records
+  has_many :health_records, dependent: :destroy
   has_many :emergency_access_logs, dependent: :destroy
+  has_many :medications, through: :health_records
 
   # ----------------------------------------------------------------------------
   # 5) If you generate a random password on creation (for staff usage), 

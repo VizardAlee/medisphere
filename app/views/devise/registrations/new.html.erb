@@ -3,102 +3,91 @@
   <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10">
       <div class="card shadow-sm border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn">
-        <!-- Header -->
         <div class="card-header bg-gradient-primary text-white py-4 text-center">
-          <h2 class="mb-2 fw-bold">
-            <i class="bi bi-person-plus-fill me-2"></i>Sign Up
-          </h2>
+          <h2 class="mb-2 fw-bold"><i class="bi bi-person-plus-fill me-2"></i>Sign Up</h2>
           <p class="text-light mb-0 fst-italic">Create your account and organization to get started</p>
         </div>
-
-        <!-- Body -->
         <div class="card-body p-5 bg-light">
-          <%= form_with model: @user, url: user_registration_path, local: true, class: "needs-validation", novalidate: true do |f| %>
+          <%= form_with model: @user, url: user_registration_path, local: true, class: "needs-validation", novalidate: true, data: { turbo: false } do |f| %>
             <%= render "devise/shared/error_messages", resource: @user %>
 
             <!-- User Fields -->
-            <h5 class="text-primary fw-semibold mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.1s;">
-              <i class="bi bi-person-circle me-2"></i>User Information
-            </h5>
+            <h5 class="text-primary fw-semibold mb-4"><i class="bi bi-person-circle me-2"></i>User Information</h5>
             <div class="row g-4">
-              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.2s;">
+              <div class="col-md-6">
                 <%= f.label :name, "Full Name", class: "form-label fw-semibold text-muted" %>
-                <%= f.text_field :name, autofocus: true, autocomplete: "name", class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter full name", required: true %>
+                <%= f.text_field :name, autofocus: true, autocomplete: "name", class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please enter your full name.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.2s;">
+              <div class="col-md-6">
                 <%= f.label :email, "Email Address", class: "form-label fw-semibold text-muted" %>
-                <%= f.email_field :email, autocomplete: "email", class: "form-control form-control-lg shadow-sm border-0", placeholder: "example@mail.com", required: true %>
+                <%= f.email_field :email, autocomplete: "email", class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please enter a valid email address.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.3s;">
+              <div class="col-md-6">
                 <%= f.label :phone, "Phone Number", class: "form-label fw-semibold text-muted" %>
-                <%= f.telephone_field :phone, autocomplete: "tel", class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., +234...", required: true %>
+                <%= f.telephone_field :phone, autocomplete: "tel", class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please enter a phone number.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.3s;">
+              <div class="col-md-6">
                 <%= f.label :password, "Password", class: "form-label fw-semibold text-muted" %>
-                <%= f.password_field :password, autocomplete: "new-password", class: "form-control form-control-lg shadow-sm border-0", placeholder: "Enter password", required: true %>
+                <%= f.password_field :password, autocomplete: "new-password", class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <% if @minimum_password_length %>
                   <small class="form-text text-muted">(<%= @minimum_password_length %> characters minimum)</small>
                 <% end %>
                 <div class="invalid-feedback">Please enter a password.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.4s;">
+              <div class="col-md-6">
                 <%= f.label :password_confirmation, "Confirm Password", class: "form-label fw-semibold text-muted" %>
-                <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control form-control-lg shadow-sm border-0", placeholder: "Re-enter password", required: true %>
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please confirm your password.</div>
               </div>
             </div>
 
             <!-- Organization Fields -->
-            <h5 class="text-primary fw-semibold mt-5 mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.5s;">
-              <i class="bi bi-building me-2"></i>Organization Information
-            </h5>
+            <h5 class="text-primary fw-semibold mt-5 mb-4"><i class="bi bi-building me-2"></i>Organization Information</h5>
             <div class="row g-4">
-              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.6s;">
+              <div class="col-md-6">
                 <%= label_tag :organization_name, "Organization Name", class: "form-label fw-semibold text-muted" %>
-                <%= text_field_tag :organization_name, params[:organization_name], class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., Test Hospital", required: true %>
-                <small class="form-text text-muted">For emergency divisions, enter the division name.</small>
+                <%= text_field_tag :organization_name, params[:organization_name], class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please enter an organization name.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.6s;">
+              <div class="col-md-6">
                 <%= label_tag :organization_address, "Organization Address", class: "form-label fw-semibold text-muted" %>
-                <%= text_field_tag :organization_address, params[:organization_address], class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., 123 Main St", required: true %>
+                <%= text_field_tag :organization_address, params[:organization_address], class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please enter an address.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.7s;">
+              <div class="col-md-6">
                 <%= label_tag :organization_phone, "Organization Phone", class: "form-label fw-semibold text-muted" %>
-                <%= text_field_tag :organization_phone, params[:organization_phone], class: "form-control form-control-lg shadow-sm border-0", placeholder: "e.g., +234...", required: true %>
+                <%= text_field_tag :organization_phone, params[:organization_phone], class: "form-control form-control-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please enter a phone number.</div>
               </div>
-              <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.7s;">
+              <div class="col-md-6">
                 <%= label_tag :organization_type, "Organization Type", class: "form-label fw-semibold text-muted" %>
-                <%= select_tag :organization_type, options_for_select([["Hospital", "hospital"], ["Pharmacy", "pharmacy"], ["Emergency", "emergency"]], params[:organization_type] || "hospital"), class: "form-select form-select-lg shadow-sm border-0", id: "organization_type", required: true %>
+                <%= select_tag :organization_type, options_for_select([["Hospital", "hospital"], ["Pharmacy", "pharmacy"], ["Emergency", "emergency"]], params[:organization_type]), class: "form-select form-select-lg shadow-sm border-0", required: true %>
                 <div class="invalid-feedback">Please select an organization type.</div>
+              </div>
+              <div class="col-md-6">
+                <%= label_tag :state, "State", class: "form-label fw-semibold text-muted" %>
+                <%= select_tag :state, options_for_select(@states, params[:state]), class: "form-select form-select-lg shadow-sm border-0", prompt: "Select a state", required: true %>
+                <div class="invalid-feedback">Please select a state.</div>
               </div>
             </div>
 
-            <!-- Emergency Fields (Hidden by Default) -->
+            <!-- Emergency Fields -->
             <div id="emergency_fields" style="display: none;" class="mt-4">
-              <h5 class="text-primary fw-semibold mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.8s;">
-                <i class="bi bi-shield-shaded me-2"></i>Emergency Organization Details
-              </h5>
+              <h5 class="text-primary fw-semibold mb-4"><i class="bi bi-shield-shaded me-2"></i>Emergency Organization Details</h5>
               <div class="row g-4">
-                <div class="col-md-6 animate__animated animate__fadeInLeft" style="animation-delay: 0.9s;">
-                  <%= label_tag :state, "State", class: "form-label fw-semibold text-muted" %>
-                  <%= select_tag :state, options_for_select(@states || ["Kaduna", "Lagos", "Abuja"], params[:state]), class: "form-select form-select-lg shadow-sm border-0", prompt: "Select a state" %>
-                </div>
-                <div class="col-md-6 animate__animated animate__fadeInRight" style="animation-delay: 0.9s;">
+                <div class="col-md-12">
                   <%= label_tag :emergency_organization_type, "Emergency Organization Type", class: "form-label fw-semibold text-muted" %>
-                  <%= select_tag :emergency_organization_type, options_for_select([["Police", "Police"], ["Fire Service", "Fire Service"], ["Road Safety", "Road Safety"]], params[:emergency_organization_type]), class: "form-select form-select-lg shadow-sm border-0", prompt: "Select emergency type" %>
-                  <small class="form-text text-muted">Choose the type of emergency organization this division belongs to.</small>
+                  <%= select_tag :emergency_organization_type, options_for_select(@emergency_organizations, params[:emergency_organization_type]), class: "form-select form-select-lg shadow-sm border-0", prompt: "Select emergency type" %>
+                  <div class="invalid-feedback">Please select an emergency type if applicable.</div>
                 </div>
               </div>
             </div>
 
             <!-- Submit Button -->
-            <div class="d-grid mt-5 animate__animated animate__fadeInUp" style="animation-delay: 1s;">
+            <div class="d-grid mt-5">
               <%= f.submit "Sign Up", class: "btn btn-primary btn-lg shadow-sm fw-semibold" %>
             </div>
           <% end %>
@@ -108,55 +97,27 @@
   </div>
 </div>
 
-<!-- Custom CSS -->
 <style>
   .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
   .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important; /* Softer shadow from previous adjustment */
-  }
-  .form-control, .form-select {
-    transition: all 0.3s ease;
-  }
-  .form-control:focus, .form-select:focus {
-    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-    border-color: #007bff;
-  }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important; }
+  .form-control, .form-select { transition: all 0.3s ease; }
+  .form-control:focus, .form-select:focus { box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); border-color: #007bff; }
   .btn { transition: all 0.3s ease; }
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important; /* Softer button shadow */
-  }
-  .form-label { font-size: 1.1rem; }
-  .form-control-lg, .form-select-lg {
-    padding: 0.75rem 1.25rem;
-    font-size: 1.1rem;
-    border-radius: 0.5rem;
-  }
-  .invalid-feedback { font-size: 0.9rem; }
-  .form-text { font-size: 0.85rem; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important; }
 </style>
 
-<!-- Include Animate.css -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-
-<!-- JavaScript for Emergency Fields Toggle -->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const orgTypeSelect = document.getElementById("organization_type");
     const emergencyFields = document.getElementById("emergency_fields");
-
-    // Set initial visibility based on selected value
     emergencyFields.style.display = orgTypeSelect.value === "emergency" ? "block" : "none";
-
     orgTypeSelect.addEventListener("change", function() {
       emergencyFields.style.display = this.value === "emergency" ? "block" : "none";
     });
   });
 </script>
 
-<!-- Bootstrap Client-Side Validation Script -->
 <script>
   (function () {
     'use strict';
@@ -174,3 +135,5 @@
     }, false);
   })();
 </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

@@ -1,68 +1,220 @@
-<!-- Pending Organizations -->
-<div class="card shadow-sm">
-  <div class="card-header bg-danger text-white">
-    <h4>Pending Organizations</h4>
-  </div>
-  <div class="card-body">
-    <% if @organizations.any? %>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>State</th>
-            <th>Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @organizations.each do |organization| %>
-            <tr>
-              <td><%= organization.name %></td>
-              <td><%= organization.state %></td>
-              <td><%= organization.emergency_organization_type %></td>
-              <td>
-                <%= link_to "Approve", approve_admin_emergency_organization_path(organization), method: :patch, class: "btn btn-success btn-sm" %>
-                <%= link_to "Reject", reject_admin_emergency_organization_path(organization), method: :patch, class: "btn btn-danger btn-sm" %>
-              </td>
-            </tr>
+<!-- app/views/admin/emergency_respondents/_super_admin_emergency_dashboard.html.erb -->
+<div class="container py-5">
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="pending-orgs-tab" data-bs-toggle="tab" data-bs-target="#pending-orgs" type="button" role="tab" aria-controls="pending-orgs" aria-selected="true">Pending Organizations</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="approved-orgs-tab" data-bs-toggle="tab" data-bs-target="#approved-orgs" type="button" role="tab" aria-controls="approved-orgs" aria-selected="false">Approved Organizations</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pending-respondents-tab" data-bs-toggle="tab" data-bs-target="#pending-respondents" type="button" role="tab" aria-controls="pending-respondents" aria-selected="false">Pending Respondents</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="approved-respondents-tab" data-bs-toggle="tab" data-bs-target="#approved-respondents" type="button" role="tab" aria-controls="approved-respondents" aria-selected="false">Approved Respondents</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="reported-logs-tab" data-bs-toggle="tab" data-bs-target="#reported-logs" type="button" role="tab" aria-controls="reported-logs" aria-selected="false">Reported Access Logs</button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="adminTabContent">
+    <!-- Pending Organizations -->
+    <div class="tab-pane fade show active" id="pending-orgs" role="tabpanel" aria-labelledby="pending-orgs-tab">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn" style="animation-delay: 0.2s;">
+        <div class="card-header bg-gradient-danger text-white py-3">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-building me-2"></i>Pending Organizations</h4>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <% if @pending_organizations.any? %>
+            <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+              <thead class="table-dark bg-gradient-dark">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Name</th>
+                  <th scope="col" class="py-3 px-4">State</th>
+                  <th scope="col" class="py-3 px-4">Type</th>
+                  <th scope="col" class="py-3 px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @pending_organizations.each do |organization| %>
+                  <tr>
+                    <td class="px-4"><%= organization.name %></td>
+                    <td class="px-4"><%= organization.state %></td>
+                    <td class="px-4"><%= organization.emergency_organization_type %></td>
+                    <td class="px-4">
+                      <%= button_to "Approve", approve_admin_emergency_organization_path(organization), method: :patch, class: "btn btn-success btn-sm shadow-sm", data: { turbo: false } %>
+                      <%= button_to "Reject", reject_admin_emergency_organization_path(organization), method: :patch, class: "btn btn-danger btn-sm shadow-sm", data: { turbo: false } %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="text-muted text-center">No pending organizations.</p>
           <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <p>No pending organizations.</p>
-    <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Organizations -->
+    <div class="tab-pane fade" id="approved-orgs" role="tabpanel" aria-labelledby="approved-orgs-tab">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn" style="animation-delay: 0.2s;">
+        <div class="card-header bg-gradient-success text-white py-3">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-building-check me-2"></i>Approved Organizations</h4>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <% if @approved_organizations.any? %>
+            <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+              <thead class="table-dark bg-gradient-dark">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Name</th>
+                  <th scope="col" class="py-3 px-4">State</th>
+                  <th scope="col" class="py-3 px-4">Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @approved_organizations.each do |organization| %>
+                  <tr>
+                    <td class="px-4"><%= organization.name %></td>
+                    <td class="px-4"><%= organization.state %></td>
+                    <td class="px-4"><%= organization.emergency_organization_type %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="text-muted text-center">No approved organizations.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Respondents -->
+    <div class="tab-pane fade" id="pending-respondents" role="tabpanel" aria-labelledby="pending-respondents-tab">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn" style="animation-delay: 0.4s;">
+        <div class="card-header bg-gradient-warning text-white py-3">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-person-check me-2"></i>Pending Respondents</h4>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <% if @pending_respondents.any? %>
+            <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+              <thead class="table-dark bg-gradient-dark">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Name</th>
+                  <th scope="col" class="py-3 px-4">Organization</th>
+                  <th scope="col" class="py-3 px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @pending_respondents.each do |respondent| %>
+                  <tr>
+                    <td class="px-4"><%= respondent.name %></td>
+                    <td class="px-4"><%= respondent.organization&.name || "N/A" %></td>
+                    <td class="px-4">
+                      <%= form_with model: respondent, url: verify_admin_emergency_respondent_path(respondent), method: :patch, local: true, data: { turbo: false } do |f| %>
+                        <%= f.submit "Verify", class: "btn btn-success btn-sm shadow-sm", data: { confirm: "Are you sure you want to verify this respondent?" } %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="text-muted text-center">No pending respondents.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Respondents -->
+    <div class="tab-pane fade" id="approved-respondents" role="tabpanel" aria-labelledby="approved-respondents-tab">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn" style="animation-delay: 0.4s;">
+        <div class="card-header bg-gradient-success text-white py-3">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-person-check-fill me-2"></i>Approved Respondents</h4>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <% if @approved_respondents.any? %>
+            <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+              <thead class="table-dark bg-gradient-dark">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Name</th>
+                  <th scope="col" class="py-3 px-4">Organization</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @approved_respondents.each do |respondent| %>
+                  <tr>
+                    <td class="px-4"><%= respondent.name %></td>
+                    <td class="px-4"><%= respondent.organization&.name || "N/A" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="text-muted text-center">No approved respondents.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reported Access Logs -->
+    <div class="tab-pane fade" id="reported-logs" role="tabpanel" aria-labelledby="reported-logs-tab">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn" style="animation-delay: 0.6s;">
+        <div class="card-header bg-gradient-info text-white py-3">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-shield-exclamation me-2"></i>Reported Access Logs</h4>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <% if @reported_access_logs.any? %>
+            <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+              <thead class="table-dark bg-gradient-dark">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Patient</th>
+                  <th scope="col" class="py-3 px-4">Responder</th>
+                  <th scope="col" class="py-3 px-4">Accessed At</th>
+                  <th scope="col" class="py-3 px-4">Reported At</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @reported_access_logs.each_with_index do |log, index| %>
+                  <tr class="animate__animated animate__fadeInUp" style="animation-delay: <%= (index * 0.1) %>s;">
+                    <td class="px-4"><%= log.patient.name %></td>
+                    <td class="px-4"><%= log.user.name %></td>
+                    <td class="px-4"><%= log.accessed_at.strftime("%B %d, %Y %I:%M %p") %></td>
+                    <td class="px-4"><%= log.updated_at.strftime("%B %d, %Y %I:%M %p") %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="text-muted text-center">No reported access logs.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Pending Respondents -->
-<div class="card shadow-sm mt-4">
-  <div class="card-header bg-warning text-white">
-    <h4>Pending Respondents</h4>
-  </div>
-  <div class="card-body">
-    <% if @pending_respondents.any? %>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Organization</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @pending_respondents.each do |respondent| %>
-            <tr>
-              <td><%= respondent.name %></td>
-              <td><%= respondent.organization.name %></td>
-              <td>
-                <%= link_to "Verify", verify_admin_emergency_respondent_path(respondent), method: :patch, class: "btn btn-success btn-sm" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <p>No pending respondents.</p>
-    <% end %>
-  </div>
-</div>
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-danger { background: linear-gradient(135deg, #dc3545, #ff6b6b); }
+  .bg-gradient-warning { background: linear-gradient(135deg, #ffc107, #ffe066); }
+  .bg-gradient-info { background: linear-gradient(135deg, #17a2b8, #66d9ef); }
+  .bg-gradient-success { background: linear-gradient(135deg, #28a745, #66e085); }
+  .bg-gradient-dark { background: linear-gradient(135deg, #343a40, #495057); }
+  .bg-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+  .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important; }
+  .btn { transition: all 0.3s ease; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important; }
+  .btn-success, .btn-danger { border-width: 2px; }
+  .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.1); transition: background-color 0.2s ease; }
+  .nav-tabs .nav-link { transition: all 0.3s ease; }
+  .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus { border-color: #007bff; color: #007bff; }
+  .nav-tabs .nav-link.active { background-color: #007bff; color: white; border-color: #007bff; }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

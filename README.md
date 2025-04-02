@@ -1,100 +1,168 @@
-```md
 # MediSphere
 
-MediSphere is a health management system designed for hospitals and pharmacies in Northern Nigeria. It enables hospitals to create and manage patient profiles, update health records, and facilitate secure access to patient information.
+**MediSphere** is a health management system tailored for hospitals and pharmacies in Northern Nigeria. It streamlines patient profile creation, health record management, and secure emergency access to critical information, with a focus on transparency, security, and user empowerment.
+
+
+## Table of Contents
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage & Roles](#usage--roles)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
 
 ## Features
 
-- **Role-Based Access Control**  
-  - Separate **User** model (Admin, Staff) and **Patient** model  
-  - Admins and Staff log in with email and password  
-  - Patients log in with **phone number only**  
-- **Hospital & Pharmacy Management**  
-- **Patient Record Management**  
-  - Staff create and manage patient profiles  
-  - Patients can view their own health records  
-- **Emergency Health Information Access**  
-- **Secure Authentication & Authorization**  
-  - Powered by Devise, with separate configurations for Users and Patients  
-  - Fine-grained policies via **Pundit**  
-- **Bootstrap-Powered UI**  
-  - Responsive design with a modern look
+- **Role-Based Access Control**
+  - Distinct `User` model (Admin, Staff, Emergency Respondents) and `Patient` model.
+  - Admins and Staff log in with email and password.
+  - Patients log in using **phone number only** for simplicity.
+
+- **Hospital & Pharmacy Management**
+  - Manage healthcare facilities and their staff efficiently.
+
+- **Patient Record Management**
+  - Staff can create, update, and manage patient profiles.
+  - Patients can view their personal health records securely.
+
+- **Emergency Health Information Access**
+  - Emergency respondents can search patient records by phone number for rapid response.
+  - Access is logged and patients are notified to prevent abuse.
+
+- **Patient Access Tracking**
+  - Patients have a dashboard tab to view all emergency access logs (who accessed their data and when).
+  - Includes a "Report" feature to flag suspicious access.
+
+- **Secure Authentication & Authorization**
+  - Powered by **Devise** with separate configurations for `Users` and `Patients`.
+  - Fine-grained policies enforced via **Pundit**.
+
+- **Beautiful UI**
+  - Responsive, modern design with Bootstrap 5, featuring gradients, animations (via Animate.css), and a user-friendly interface.
+
 
 ## Technologies Used
 
-- **Ruby on Rails** (Backend)
-- **PostgreSQL** (Database)
-- **Bootstrap** (Frontend UI)
-- **Devise** (Authentication for Users & Patients)
-- **Pundit** (Authorization)
+- **Ruby on Rails** (Backend) - Version 7.2+
+- **PostgreSQL** (Database) - Reliable and scalable storage
+- **Bootstrap 5** (Frontend UI) - Responsive styling
+- **Animate.css** (Animations) - Smooth UI transitions
+- **Devise** (Authentication) - Secure login for Users and Patients
+- **Pundit** (Authorization) - Role-based access control
+- **Active Job** (with Sidekiq) - Asynchronous email delivery
+
 
 ## Installation
 
 ### Prerequisites
-
-- **Ruby** (>= 3.0)
-- **Rails** (>= 7.0)
-- **PostgreSQL**
-- **Node.js** & **Yarn**
+- Ruby (>= 3.0)
+- Rails (>= 7.0)
+- PostgreSQL (15+ recommended)
+- Node.js & Yarn (for JavaScript assets)
+- SMTP server (e.g., Gmail, SendGrid) for email notifications
 
 ### Setup Steps
-
-1. **Clone the repository**:
+1. **Clone the Repository**
    ```bash
    git clone https://github.com/vizardalee/medisphere.git
    cd medisphere
    ```
-2. **Install dependencies**:
+
+2. **Install Dependencies**
    ```bash
    bundle install
    yarn install
    ```
-3. **Set up the database**:
+
+3. **Configure Environment**
+   - Copy `.env.example` to `.env` and update:
+     ```
+     DATABASE_URL=postgres://username:password@localhost:5432/medisphere_development
+     SMTP_HOST=smtp.example.com
+     SMTP_PORT=587
+     SMTP_USERNAME=your-email@example.com
+     SMTP_PASSWORD=your-password
+     ```
+
+4. **Set Up the Database**
    ```bash
-   rails db:create db:migrate db:seed
+   rails db:create
+   rails db:migrate
+   rails db:seed  # Optional: seeds initial data
    ```
-4. **Start the Rails server**:
+
+5. **Start the Server**
    ```bash
    rails server
    ```
-5. **Visit the app** in your browser at [http://localhost:3000](http://localhost:3000).
+   - Access the app at [http://localhost:3000](http://localhost:3000).
+
 
 ## Usage & Roles
 
-- **Admin**  
-  - Manages hospitals/pharmacies, adds staff, and controls access.  
-  - Logs in at `/users/sign_in` with email/password.
-- **Staff (Doctors, Pharmacists, Clerks)**  
-  - Create and manage patient records, view patient health info.  
-  - Logs in at `/users/sign_in` with email/password.
-- **Patients**  
-  - **No password needed**; logs in via **phone number** at `/patients/sign_in`.  
-  - Can view personal health records only.
-- **Emergency Respondents**  
-  - Access limited emergency details (if configured).
+### Admin
+- **Role**: Manages hospitals, pharmacies, staff, and oversees system access.
+- **Login**: `/users/sign_in` with email and password.
+- **Actions**: Add staff, manage patient records, review access reports.
+
+### Staff (Doctors, Pharmacists, Clerks)
+- **Role**: Creates and updates patient profiles and health records.
+- **Login**: `/users/sign_in` with email and password.
+- **Actions**: Manage patient data within their organization.
+
+### Patients
+- **Role**: Views their own health records and emergency access logs.
+- **Login**: `/patients/sign_in` with **phone number only** (no password required initially; temporary password sent via email).
+- **Actions**: Monitor personal data and report unauthorized access.
+
+### Emergency Respondents
+- **Role**: Accesses patient emergency info for rapid response.
+- **Login**: `/users/sign_in` with email and password.
+- **Actions**: Search patient records by phone; access logged and notified to patient.
+
 
 ## Contributing
 
-1. **Fork** the repository.
-2. **Create** a feature branch:
+We welcome contributions to enhance MediSphere! Follow these steps:
+
+1. **Fork the Repository**
+   - Click "Fork" on GitHub.
+
+2. **Create a Feature Branch**
    ```bash
-   git checkout -b feature-name
+   git checkout -b feature/your-feature-name
    ```
-3. **Make changes** and commit:
+
+3. **Make Changes**
+   - Adhere to Ruby and Rails conventions.
+   - Add tests (e.g., using RSpec if implemented).
+
+4. **Commit and Push**
    ```bash
    git commit -m "Description of changes"
+   git push origin feature/your-feature-name
    ```
-4. **Push** to your branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. **Create a Pull Request**.
+
+5. **Submit a Pull Request**
+   - Open a PR with a detailed description of your changes.
+
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
+
 ## Contact
 
-For questions or contributions, reach out via [servicegurunigeria@gmail.com](mailto:servicegurunigeria@gmail.com).
-```
+For questions, feedback, or support:
+- **Email**: [servicegurunigeria@gmail.com](mailto:servicegurunigeria@gmail.com)
+- **GitHub Issues**: [github.com/vizardalee/medisphere/issues](https://github.com/vizardalee/medisphere/issues)
+
+
+### Updates and Enhancements
+- **New Features**: Added patient access tracking and abuse prevention mechanisms.
+- **Beautification**: Improved Markdown formatting with bold headings, code blocks, and a clear structure.
+- **Details**: Included Active Job/Sidekiq for email delivery, updated URLs (`/patients/sign_in`), and clarified patient login process.
+- **Context**: Kept your focus on Northern Nigeria and role-based functionality intact.

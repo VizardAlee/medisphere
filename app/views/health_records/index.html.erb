@@ -1,4 +1,4 @@
-<!-- app/views/health_records/index.html.erb -->
+<!-- app/views/health_records/index.html.erb (unchanged) -->
 <div class="container py-5">
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-5 animate__animated animate__fadeInDown">
@@ -27,7 +27,7 @@
 
   <!-- Search Results Area -->
   <div id="health-records-list" class="animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
-    <%= render partial: "health_records_list", locals: { records: @records } %>
+    <%= render 'health_records_list' %>
   </div>
 
   <!-- Back to Dashboard -->
@@ -40,7 +40,7 @@
   <% end %>
 </div>
 
-<!-- Custom CSS -->
+<!-- Custom CSS (unchanged) -->
 <style>
   .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
   .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }

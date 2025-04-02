@@ -1,7 +1,7 @@
 <!-- app/views/health_records/_form.html.erb -->
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
+    <div class="col-lg-10">
       <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn">
         <!-- Header -->
         <div class="card-header bg-gradient-primary text-white py-4 text-center">
@@ -9,14 +9,14 @@
             <i class="bi bi-file-earmark-medical-fill me-2"></i>
             <%= @record.new_record? ? "New Health Record" : "Edit Health Record" %>
           </h3>
-          <p class="text-light mt-2 mb-0 small">
-            <%= @record.new_record? ? "Create a new health record" : "Update existing health record" %>
+          <p class="text-light mt-2 mb-0 fst-italic">
+            <%= @record.new_record? ? "Add a new health record for #{@patient.name}" : "Update health record details" %>
           </p>
         </div>
 
         <!-- Body -->
         <div class="card-body p-5 bg-light">
-          <%= form_with model: @record, local: true, class: "needs-validation", novalidate: true do |form| %>
+          <%= form_with model: [@patient, @record], local: true, class: "needs-validation", novalidate: true, id: "health-record-form" do |form| %>
             <% if @record.errors.any? %>
               <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4 animate__animated animate__fadeIn" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -30,27 +30,67 @@
               </div>
             <% end %>
 
-            <div class="mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.1s;">
-              <%= form.label :patient_id, "Select Patient", class: "form-label fw-semibold text-muted" %>
-              <%= form.collection_select :patient_id, current_user.organization.patients.order(:name), :id, :name, { prompt: "Select a patient" }, class: "form-select form-select-lg shadow-sm border-0", required: true %>
-              <div class="invalid-feedback">Please select a patient.</div>
-            </div>
+            <!-- Patient Selection (only for new records) -->
+            <% if @record.new_record? %>
+              <div class="mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.1s;">
+                <%= form.label :patient_id, "Select Patient", class: "form-label fw-semibold text-muted" %>
+                <%= form.collection_select :patient_id, current_user.organization.patients.order(:name), :id, :name, 
+                                           { prompt: "Select a patient" }, 
+                                           class: "form-select form-select-lg shadow-sm border-0", required: true %>
+                <div class="invalid-feedback">Please select a patient.</div>
+              </div>
+            <% end %>
 
+            <!-- Diagnosis -->
             <div class="mb-4 animate__animated animate__fadeInRight" style="animation-delay: 0.2s;">
               <%= form.label :diagnosis, "Diagnosis", class: "form-label fw-semibold text-muted" %>
-              <%= form.text_area :diagnosis, class: "form-control form-control-lg shadow-sm border-0", rows: 5, placeholder: "Enter diagnosis details", required: true %>
+              <%= form.text_area :diagnosis, class: "form-control form-control-lg shadow-sm border-0", rows: 4, 
+                                 placeholder: "Enter diagnosis details", required: true %>
               <div class="invalid-feedback">Please enter a diagnosis.</div>
             </div>
 
+            <!-- Medications -->
             <div class="mb-4 animate__animated animate__fadeInLeft" style="animation-delay: 0.3s;">
-              <%= form.label :prescription, "Prescription", class: "form-label fw-semibold text-muted" %>
-              <%= form.text_area :prescription, class: "form-control form-control-lg shadow-sm border-0", rows: 5, placeholder: "Enter prescribed medication", required: true %>
-              <div class="invalid-feedback">Please enter a prescription.</div>
+              <h5 class="fw-semibold text-muted mb-3"><i class="bi bi-capsule me-2"></i>Medications</h5>
+              <div id="medications-fields">
+                <%= form.fields_for :medications do |med_form| %>
+                  <div class="row g-3 mb-3 align-items-end border-bottom pb-3 medication-row">
+                    <div class="col-md-4">
+                      <%= med_form.label :name, "Medication Name", class: "form-label fw-semibold text-muted" %>
+                      <%= med_form.text_field :name, class: "form-control shadow-sm border-0", placeholder: "e.g., Paracetamol", required: true %>
+                      <div class="invalid-feedback">Please enter a medication name.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <%= med_form.label :dosage, class: "form-label fw-semibold text-muted" %>
+                      <%= med_form.text_field :dosage, class: "form-control shadow-sm border-0", placeholder: "e.g., 500mg" %>
+                    </div>
+                    <div class="col-md-2">
+                      <%= med_form.label :duration_days, "Duration (days)", class: "form-label fw-semibold text-muted" %>
+                      <%= med_form.number_field :duration_days, class: "form-control shadow-sm border-0", min: 1, value: 30 %>
+                    </div>
+                    <div class="col-md-3">
+                      <%= med_form.label :start_date, class: "form-label fw-semibold text-muted" %>
+                      <%= med_form.date_field :start_date, class: "form-control shadow-sm border-0", value: Date.today %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-sm shadow-sm mt-2" id="add-medication">
+                <i class="bi bi-plus-circle me-2"></i>Add Medication
+              </button>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-4 animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">
+              <%= form.label :notes, "Additional Notes", class: "form-label fw-semibold text-muted" %>
+              <%= form.text_area :notes, class: "form-control form-control-lg shadow-sm border-0", rows: 3, 
+                                 placeholder: "Enter any additional notes" %>
             </div>
 
             <%= form.hidden_field :updated_by, value: current_user.id %>
 
-            <div class="d-flex justify-content-between mt-5 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-5 animate__animated animate__fadeInUp" style="animation-delay: 0.5s;">
               <%= form.submit @record.new_record? ? "Create Record" : "Update Record", class: "btn btn-primary btn-lg shadow-sm fw-semibold" %>
               <%= link_to "Back", health_records_path, class: "btn btn-outline-secondary btn-lg shadow-sm" %>
             </div>
@@ -64,13 +104,12 @@
 <!-- Custom CSS -->
 <style>
   .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
+  .bg-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
   .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
-  }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important; }
   .form-control, .form-select {
     transition: all 0.3s ease;
+    border-radius: 0.5rem;
   }
   .form-control:focus, .form-select:focus {
     box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
@@ -81,34 +120,72 @@
     transform: translateY(-3px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
   }
-  .btn-outline-secondary { border-width: 2px; }
+  .btn-outline-secondary, .btn-outline-primary { border-width: 2px; }
   .form-label { font-size: 1.1rem; }
-  .form-control-lg, .form-select-lg {
-    padding: 0.75rem 1.25rem;
-    font-size: 1.1rem;
-    border-radius: 0.5rem;
-  }
+  .form-control-lg, .form-select-lg { padding: 0.75rem 1.25rem; font-size: 1.1rem; }
   .invalid-feedback { font-size: 0.9rem; }
+  .medication-row { position: relative; }
 </style>
 
 <!-- Include Animate.css -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
-<!-- Bootstrap Client-Side Validation Script -->
+<!-- JavaScript for Dynamic Medication Fields -->
 <script>
-  (function () {
-    'use strict';
-    window.addEventListener('load', function () {
-      var forms = document.getElementsByClassName('needs-validation');
-      Array.prototype.filter.call(forms, function (form) {
-        form.addEventListener('submit', function (event) {
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
+  document.addEventListener('DOMContentLoaded', function () {
+    const addButton = document.getElementById('add-medication');
+    const container = document.getElementById('medications-fields');
+    let index = <%= @record.medications.size %>;
+
+    addButton.addEventListener('click', function () {
+      const template = `
+        <div class="row g-3 mb-3 align-items-end border-bottom pb-3 medication-row animate__animated animate__fadeIn" style="animation-delay: 0.1s;">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold text-muted">Medication Name</label>
+            <input type="text" name="health_record[medications_attributes][${index}][name]" class="form-control shadow-sm border-0" placeholder="e.g., Paracetamol" required>
+            <div class="invalid-feedback">Please enter a medication name.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold text-muted">Dosage</label>
+            <input type="text" name="health_record[medications_attributes][${index}][dosage]" class="form-control shadow-sm border-0" placeholder="e.g., 500mg">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold text-muted">Duration (days)</label>
+            <input type="number" name="health_record[medications_attributes][${index}][duration_days]" class="form-control shadow-sm border-0" min="1" value="30">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold text-muted">Start Date</label>
+            <input type="date" name="health_record[medications_attributes][${index}][start_date]" class="form-control shadow-sm border-0" value="<%= Date.today %>">
+          </div>
+          <div class="col-md-12 text-end">
+            <button type="button" class="btn btn-outline-danger btn-sm shadow-sm remove-medication">
+              <i class="bi bi-trash"></i> Remove
+            </button>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', template);
+      index++;
+
+      // Add remove functionality to new buttons
+      const removeButtons = container.querySelectorAll('.remove-medication');
+      removeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          this.closest('.medication-row').remove();
+        });
       });
-    }, false);
-  })();
+    });
+
+    // Bootstrap Validation
+    const forms = document.getElementsByClassName('needs-validation');
+    Array.prototype.filter.call(forms, function (form) {
+      form.addEventListener('submit', function (event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  });
 </script>

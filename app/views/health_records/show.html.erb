@@ -35,8 +35,22 @@
                 <span class="ms-2"><%= @record.diagnosis.presence || 'N/A' %></span>
               </li>
               <li class="list-group-item py-3">
-                <strong class="text-muted"><i class="bi bi-capsule me-2"></i>Prescription:</strong>
-                <span class="ms-2"><%= @record.prescription.presence || 'N/A' %></span>
+                <strong class="text-muted"><i class="bi bi-capsule me-2"></i>Medications:</strong>
+                <span class="ms-2">
+                  <% if @record.medications.any? %>
+                    <ul class="list-unstyled mt-2">
+                      <% @record.medications.each do |med| %>
+                        <li><%= "#{med.name} (#{med.dosage.presence || 'N/A'}, #{med.duration_days} days)" %></li>
+                      <% end %>
+                    </ul>
+                  <% else %>
+                    N/A
+                  <% end %>
+                </span>
+              </li>
+              <li class="list-group-item py-3">
+                <strong class="text-muted"><i class="bi bi-sticky me-2"></i>Notes:</strong>
+                <span class="ms-2"><%= @record.notes.presence || 'N/A' %></span>
               </li>
               <li class="list-group-item py-3">
                 <strong class="text-muted"><i class="bi bi-person me-2"></i>Updated By:</strong>
@@ -96,7 +110,7 @@
         <%= link_to health_records_path, class: "btn btn-outline-secondary btn-lg shadow-sm", data: { turbo: false } do %>
           <i class="bi bi-arrow-left me-2"></i>Back to Records
         <% end %>
-      <% elsif patient_signed_in %>
+      <% elsif patient_signed_in? %>
         <%= link_to patient_path(current_patient), class: "btn btn-outline-secondary btn-lg shadow-sm", data: { turbo: false } do %>
           <i class="bi bi-arrow-left me-2"></i>Back to Profile
         <% end %>

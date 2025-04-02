@@ -28,7 +28,7 @@ class User < ApplicationRecord
   has_many :emergency_access_logs, dependent: :destroy
 
   # Emergency Respondent Verification
-  scope :verified_emergency_respondents, -> { where(role: :emergency_respondent, verified: true) }
+  scope :verified_emergency_respondents, -> { where(role: :staff, staff_role: :emergency_respondent, verified: true) }
 
   def can_access_emergency_records?
     emergency_respondent? && verified?
@@ -68,6 +68,12 @@ class User < ApplicationRecord
 
   # Ensure super admins are unique per state and organization
   validates :state, uniqueness: { scope: :emergency_organization_type, message: "already has a super admin for this organization" }, if: :super_admin?
+
+  # Override Devise password validation for unverified emergency respondents
+  def password_required?
+    return false if emergency_respondent? && !verified?
+    super
+  end
 
   private
 

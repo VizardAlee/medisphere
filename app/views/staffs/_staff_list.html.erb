@@ -1,52 +1,64 @@
+<!-- app/views/staffs/_staff_list.html.erb -->
 <%= turbo_frame_tag "staff_list" do %>
-  <% if staff.any? %>
-    <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
-              <thead class="table-dark bg-gradient-dark">
-                <tr>
-                  <th scope="col" class="py-3 px-4">Photo</th>
-                  <th scope="col" class="py-3 px-4">Name</th>
-                  <th scope="col" class="py-3 px-4">Role</th>
-                  <th scope="col" class="py-3 px-4">Phone</th>
-                  <th scope="col" class="py-3 px-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @staffs.each_with_index do |staff, index| %>
-                  <tr class="animate__animated animate__fadeInUp" style="animation-delay: <%= (index * 0.1) %>s;">
-                    <td class="px-4">
-                      <% if staff.photo_url.present? %>
-                        <%= image_tag staff.photo_url, class: "rounded-circle", style: "width: 40px; height: 40px; object-fit: cover;" %>
-                      <% else %>
-                        <i class="bi bi-person-circle text-muted" style="font-size: 40px;"></i>
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+    <div class="card-header bg-gradient-primary text-white py-3">
+      <h5 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill me-2"></i>Staff List</h5>
+    </div>
+    <div class="card-body p-5 bg-light">
+      <% if staff.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle rounded-3 overflow-hidden shadow-sm">
+            <thead class="table-dark bg-gradient-dark">
+              <tr>
+                <th scope="col" class="py-3 px-4">Photo</th>
+                <th scope="col" class="py-3 px-4">Name</th>
+                <th scope="col" class="py-3 px-4">Role</th>
+                <th scope="col" class="py-3 px-4">Phone</th>
+                <th scope="col" class="py-3 px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% staff.each_with_index do |staff_member, index| %>
+                <tr class="animate__animated animate__fadeInUp" style="animation-delay: <%= (index * 0.1) %>s;">
+                  <td class="px-4">
+                    <% if staff_member.photo_url.present? %>
+                      <%= image_tag staff_member.photo_url, class: "rounded-circle shadow-sm", style: "width: 40px; height: 40px; object-fit: cover;" %>
+                    <% else %>
+                      <i class="bi bi-person-circle text-muted" style="font-size: 40px;"></i>
+                    <% end %>
+                  </td>
+                  <td class="fw-medium px-4"><%= staff_member.name %></td>
+                  <td class="px-4">
+                    <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2">
+                      <%= staff_member.staff_role&.capitalize || "N/A" %>
+                    </span>
+                  </td>
+                  <td class="px-4"><%= staff_member.phone %></td>
+                  <td class="px-4">
+                    <div class="btn-group" role="group">
+                      <%= link_to staff_path(staff_member), class: "btn btn-outline-primary btn-sm shadow-sm", data: { turbo: false } do %>
+                        <i class="bi bi-eye"></i>
                       <% end %>
-                    </td>
-                    <td class="fw-medium px-4"><%= staff.name %></td>
-                    <td class="px-4">
-                      <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">
-                        <%= staff.staff_role&.capitalize || "N/A" %>
-                      </span>
-                    </td>
-                    <td class="px-4"><%= staff.phone %></td>
-                    <td class="px-4">
-                      <div class="btn-group" role="group">
-                        <%= link_to staff_path(staff), class: "btn btn-outline-primary btn-sm shadow-sm", data: { turbo: false } do %>
-                          <i class="bi bi-eye"></i>
-                        <% end %>
-                        <%= link_to edit_staff_path(staff), class: "btn btn-outline-warning btn-sm shadow-sm", data: { turbo: false } do %>
-                          <i class="bi bi-pencil"></i>
-                        <% end %>
-                        <%= link_to staff_path(staff), method: :delete, data: { turbo: false, confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm shadow-sm" do %>
-                          <i class="bi bi-trash"></i>
-                        <% end %>
-                      </div>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-  <% else %>
-    <div class="alert alert-info mt-3">No staff found for the selected role.</div>
-  <% end %>
+                      <%= link_to edit_staff_path(staff_member), class: "btn btn-outline-warning btn-sm shadow-sm", data: { turbo: false } do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                      <%= link_to staff_path(staff_member), method: :delete, data: { turbo: false, confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm shadow-sm" do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info text-center mt-3 shadow-sm rounded-3 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+          <i class="bi bi-info-circle me-2"></i>No staff found for the selected role.
+        </div>
+      <% end %>
+    </div>
+  </div>
 <% end %>
+
+<!-- Custom CSS (already included in index.html.erb) -->

@@ -1,8 +1,9 @@
-<p>Hello <%= @respondent.name %>,</p>
-<p>Your emergency respondent account has been verified by the super admin. You can now log in to the system with the following credentials:</p>
+<h1>Welcome, <%= @respondent.name %>!</h1>
+<p>Your emergency respondent account has been verified by the Super Admin.</p>
+<p>You can now sign in using the following credentials:</p>
 <ul>
   <li><strong>Email:</strong> <%= @respondent.email %></li>
-  <li><strong>Password:</strong> <%= @password %></li>
+  <li><strong>Password:</strong> <%= @temp_password %></li>
 </ul>
-<p>Please change your password after your first login for security purposes.</p>
+<p>Please sign in at <%= link_to "this link", new_user_session_url %> and change your password after logging in.</p>
 <p>Thank you!</p>

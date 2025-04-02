@@ -1,0 +1,13 @@
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #dc3545;">Emergency Access Report - <%= @super_admin.state %></h2>
+  <p>Dear <%= @super_admin.name || "Super Admin" %>,</p>
+  <p>A patient in your state has reported an emergency access log as potentially unauthorized:</p>
+  <ul>
+    <li><strong>Patient:</strong> <%= @patient.name %></li>
+    <li><strong>Responder:</strong> <%= @log.user.name %></li>
+    <li><strong>Accessed At:</strong> <%= @log.accessed_at.strftime("%B %d, %Y at %I:%M %p") %></li>
+    <li><strong>State:</strong> <%= @super_admin.state %></li>
+  </ul>
+  <p>Please review this report in your admin dashboard under the "Reported Access Logs" tab or contact the patient for further details.</p>
+  <p style="margin-top: 20px;">Regards,<br>The MediSphere Team</p>
+</div>

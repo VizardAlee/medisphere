@@ -16,21 +16,20 @@ class PatientsController < ApplicationController
       end
       # Staff is authorized => continue to show
       @health_records = @patient.health_records
+      @access_logs = @patient.emergency_access_logs.order(accessed_at: :desc) # Add this for staff
       return
     end
 
     if patient_signed_in?
-      # Only allow if current_patient == the @patient
       if current_patient.id != @patient.id
         redirect_to root_path, alert: "Unauthorized (not your patient record)."
       else
         @health_records = @patient.health_records
-        @access_logs = @patient.emergency_access_logs.order(accessed_at: :desc) # Load access logs for patient
+        @access_logs = @patient.emergency_access_logs.order(accessed_at: :desc)
       end
       return
     end
 
-    # If neither staff nor correct patient => not authorized
     redirect_to new_patient_session_path, alert: "Please log in as staff or the correct patient."
   end
 

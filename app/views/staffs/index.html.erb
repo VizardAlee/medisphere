@@ -1,14 +1,49 @@
-<h1>Staff Members</h1>
-
-<%= form_with url: staffs_path, method: :get, data: { turbo: true } do %>
-  <div class="mb-3">
-    <%= label_tag :staff_role, "Filter by Role", class: "form-label" %>
-    <%= select_tag :staff_role, options_for_select(User.roles.keys.map { |role| [role.titleize, role] }),
-               include_blank: true, class: "form-select" %>
+<div class="container py-5">
+  <!-- Header -->
+  <div class="text-center mb-5 animate__animated animate__fadeInDown">
+    <h1 class="display-4 fw-bold text-primary">
+      <i class="bi bi-people-fill me-2"></i>Staff Members
+    </h1>
+    <p class="lead text-muted fst-italic">View and manage your team</p>
+    <hr class="w-25 mx-auto border-primary border-3 opacity-75">
   </div>
-  <%= submit_tag "Filter", class: "btn btn-primary" %>
-<% end %>
 
-<%= turbo_frame_tag "staff_list" do %>
-  <%= render partial: "staff_list", locals: { staff: @staffs } %>
-<% end %>
+  <!-- Filter Form -->
+  <div class="card shadow-lg border-0 rounded-4 mb-5 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+    <div class="card-body p-4 bg-gradient-light">
+      <%= form_with url: staffs_path, method: :get, data: { turbo: true }, class: "row g-3 align-items-end" do %>
+        <div class="col-md-8">
+          <%= label_tag :staff_role, "Filter by Role", class: "form-label fw-semibold text-muted" %>
+          <%= select_tag :staff_role, 
+                         options_for_select(User.roles.keys.map { |role| [role.titleize, role] }), 
+                         include_blank: "All Roles", 
+                         class: "form-select form-select-lg shadow-sm border-0" %>
+        </div>
+        <div class="col-md-4">
+          <%= submit_tag "Filter", class: "btn btn-primary btn-lg shadow-sm w-100 fw-semibold" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Staff List (Turbo Frame) -->
+  <%= turbo_frame_tag "staff_list" do %>
+    <%= render partial: "staff_list", locals: { staff: @staffs } %>
+  <% end %>
+</div>
+
+<!-- Custom CSS -->
+<style>
+  .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
+  .bg-gradient-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+  .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important; }
+  .btn { transition: all 0.3s ease; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important; }
+  .form-select { padding: 0.75rem 1.25rem; font-size: 1.1rem; border-radius: 0.5rem; transition: all 0.3s ease; }
+  .form-select:focus { box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); border-color: #007bff; }
+  .form-label { font-size: 1.1rem; }
+</style>
+
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

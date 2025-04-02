@@ -13,9 +13,9 @@
 
   <!-- Patient Details Section -->
   <% if @patient %>
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
       <div class="card-header bg-gradient-primary text-white py-3">
-        <h3 class="mb-0 fw-bold fs-4">
+        <h3 class="mb-0 fw-bold">
           <i class="bi bi-person-circle me-2"></i>Patient Details
         </h3>
       </div>
@@ -38,15 +38,27 @@
 
     <!-- Latest Health Record Section -->
     <% if @latest_health_record %>
-      <div class="card shadow-sm border-0 rounded-4 overflow-hidden mt-4 animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden mt-4 animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
         <div class="card-header bg-gradient-success text-white py-3">
-          <h3 class="mb-0 fw-bold fs-4">
+          <h3 class="mb-0 fw-bold">
             <i class="bi bi-file-medical me-2"></i>Latest Health Record
           </h3>
         </div>
         <div class="card-body p-4 bg-light">
           <p><strong>Diagnosis:</strong> <%= @latest_health_record.diagnosis || "Not specified" %></p>
-          <p><strong>Prescription:</strong> <%= @latest_health_record.prescription || "Not specified" %></p>
+          <p>
+            <strong>Medications:</strong>
+            <% if @latest_health_record.medications.any? %>
+              <ul class="list-unstyled mb-0">
+                <% @latest_health_record.medications.each do |med| %>
+                  <li><%= "#{med.name} (#{med.dosage.presence || 'N/A'})" %></li>
+                <% end %>
+              </ul>
+            <% else %>
+              Not specified
+            <% end %>
+          </p>
+          <p><strong>Notes:</strong> <%= @latest_health_record.notes || "Not specified" %></p>
           <p><strong>Updated By:</strong> <%= User.find_by(id: @latest_health_record.updated_by)&.name || "Unknown" %></p>
           <p><strong>Updated At:</strong> <%= @latest_health_record.updated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
         </div>
@@ -67,7 +79,6 @@
 <style>
   .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #00d4ff); }
   .bg-gradient-success { background: linear-gradient(135deg, #28a745, #34c759); }
-  .bg-gradient-dark { background: linear-gradient(135deg, #343a40, #495057); }
   .bg-gradient-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
   .hover-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
   .hover-card:hover {
@@ -85,7 +96,7 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
   }
-  .btn-outline-light, .btn-outline-success, .btn-outline-danger { border-width: 2px; }
+  .btn-outline-light, .btn-outline-success, .btn-outline-danger, .btn-outline-info { border-width: 2px; }
   .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.1); transition: background-color 0.2s ease; }
   .card-body i { font-size: 2.5rem; transition: transform 0.3s ease; }
   .hover-card:hover .card-body i { transform: scale(1.1); }

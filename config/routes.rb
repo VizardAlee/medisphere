@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   # Patients and Health Records
   resources :patients, only: [:new, :create, :index, :show, :edit, :update] do
-    resources :health_records, only: %i[index show]
+    resources :health_records, only: %i[index show create]
   end
 
   resources :health_records, only: [:new, :create, :index, :show, :edit, :update, :destroy]
@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'dashboard/emergency_dashboard', to: 'dashboard#emergency_dashboard', as: 'emergency_dashboard'
   post '/emergency_access_logs/:id/report', to: 'emergency_access_logs#report', as: :report_emergency_access
   # Health Check & PWA
   get "up" => "rails/health#show", as: :rails_health_check
