@@ -181,8 +181,7 @@
                 <% @reported_access_logs.each_with_index do |log, index| %>
                   <tr class="animate__animated animate__fadeInUp" style="animation-delay: <%= (index * 0.1) %>s;">
                     <td class="px-4"><%= log.patient.name %></td>
-                    <td class="px-4"><%= log.user.name %></td>
-                    <td class="px-4"><%= log.accessed_at.strftime("%B %d, %Y %I:%M %p") %></td>
+                    <td class="px-4"><%= link_to log.user.name, user_path(log.user) %></td>                    <td class="px-4"><%= log.accessed_at.strftime("%B %d, %Y %I:%M %p") %></td>
                     <td class="px-4"><%= log.updated_at.strftime("%B %d, %Y %I:%M %p") %></td>
                   </tr>
                 <% end %>

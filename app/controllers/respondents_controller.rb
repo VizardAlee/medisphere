@@ -1,20 +1,23 @@
+# app/controllers/respondents_controller.rb
 class RespondentsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_respondent
 
   def index
+    Rails.logger.info "Respondent index accessed with params: #{params.inspect}"
     if params[:query].present?
       @patient = Patient.find_by(phone: params[:query])
       if @patient
         @latest_health_record = HealthRecord.where(patient_id: @patient.id).order(id: :desc).first
-        # Log the access
         EmergencyAccessLog.create(
           patient: @patient,
           user: current_user,
           accessed_at: Time.current
         )
-        # Notify the patient
         PatientMailer.emergency_access_notification(@patient, current_user).deliver_later
+        Rails.logger.info "Patient found: #{@patient.phone}"
+      else
+        Rails.logger.info "No patient found for query: #{params[:query]}"
       end
     end
   end

@@ -1,3 +1,4 @@
+# app/controllers/dashboard_controller.rb
 class DashboardController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_super_admin, only: [:emergency_dashboard]
@@ -47,9 +48,12 @@ class DashboardController < ApplicationController
       emergency_organization_type: current_user.emergency_organization_type,
       status: "approved"
     )
-    @reported_access_logs = EmergencyAccessLog.joins(patient: :organization)
-                                              .where(organizations: { state: current_user.state, emergency_organization_type: current_user.emergency_organization_type })
-                                              .order(accessed_at: :desc)
+    @reported_access_logs = EmergencyAccessLog.joins(user: :organization, patient: :organization)
+                                              .where(reported: true) # Filter for reported logs
+                                              .where(organizations: { emergency_organization_type: current_user.emergency_organization_type })
+                                              .where(organizations_patients: { state: current_user.state })
+                                              .order(updated_at: :desc) # Order by report time
+    Rails.logger.info "Reported access logs count: #{@reported_access_logs.count}"
   end
 
   private
